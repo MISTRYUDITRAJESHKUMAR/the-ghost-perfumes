@@ -76,6 +76,9 @@ html {
   scroll-behavior: smooth;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
 }
 
 body {
@@ -84,9 +87,16 @@ body {
   line-height: 1.6;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
   position: relative;
   min-height: 100vh;
+}
+
+body.nav-open {
+  overflow: hidden !important;
+  touch-action: none;
 }
 
 /* Custom Scrollbar */
