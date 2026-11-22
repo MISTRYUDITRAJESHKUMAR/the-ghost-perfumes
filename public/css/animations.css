@@ -1,0 +1,215 @@
+﻿/* ==========================================================================
+   THE GHOST PERFUMES — Animations & 3D Effects Stylesheet
+   ========================================================================== */
+
+/* ── Ghost Float & Ethereal Glow ─────────────────────────── */
+@keyframes ghostFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+@keyframes ghostPulse {
+  0%, 100% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 35px rgba(139, 92, 246, 0.9));
+  }
+}
+
+@keyframes mistDrift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes goldShimmer {
+  0% {
+    text-shadow: 0 0 4px rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 35px rgba(254, 240, 138, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(212, 175, 55, 0.2);
+  }
+}
+
+/* ── 3D Tilt Container & Transforms ──────────────────────── */
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
+}
+
+.tilt-inner-3d {
+  transform: translateZ(30px);
+}
+
+.perspective-wrapper {
+  perspective: 1200px;
+}
+
+/* ── Floating Badge Animation ────────────────────────────── */
+.floating-element {
+  animation: ghostFloat 4s ease-in-out infinite;
+}
+
+.glowing-element {
+  animation: ghostPulse 3s ease-in-out infinite;
+}
+
+.gold-text-glow {
+  animation: goldShimmer 3s ease-in-out infinite;
+}
+
+/* ── Hero entrance animations (ensures instant visibility even without JS) ── */
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero .hero-tagline {
+  animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero .hero-title {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.hero .hero-description {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.hero .hero-actions {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.hero .hero-badges {
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
+/* ── Scroll Reveal Classes ────────────────────────────────── */
+.reveal {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.js-reveal-ready .reveal:not(.revealed):not(.hero *):not(.hero) {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.reveal.revealed,
+.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── 3D Bottle Glow Aura ──────────────────────────────────── */
+.bottle-aura {
+  position: relative;
+}
+
+.bottle-aura::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(25px);
+  pointer-events: none;
+  z-index: 0;
+  animation: ghostPulse 4s ease-in-out infinite;
+}
+
+/* ── Button Shimmer Effect ────────────────────────────────── */
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: rotate(30deg);
+  animation: shimmer 4s infinite linear;
+}
+
+/* ── Back to Top Floating Button ──────────────────────────── */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  color: var(--accent-purple);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 90;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all var(--transition-smooth);
+  backdrop-filter: blur(10px);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--accent-purple);
+  color: #fff;
+  box-shadow: 0 0 20px var(--accent-purple-glow);
+  transform: translateY(-4px);
+}

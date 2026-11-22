@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fragrance Details — THE GHOST PERFUMES</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display:none;opacity:0;pointer-events:none;">
+    <div class="ghost-spinner"><i class="fas fa-ghost"></i></div>
+    <span class="loading-text">Extracting Olfactory Profile...</span>
+  </div>
+
+  <canvas id="ghost-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.3;"></canvas>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <i class="fas fa-ghost"></i>
+        <span>THE GHOST PERFUMES</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="shop.html" class="nav-link active">Fragrances</a></li>
+        <li><a href="about.html" class="nav-link">Our Alchemy</a></li>
+        <li><a href="contact.html" class="nav-link">Concierge</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="shop.html" class="nav-icon-btn" aria-label="Search"><i class="fas fa-search"></i></a>
+        <a href="login.html" class="nav-icon-btn" id="authBtn" aria-label="Account"><i class="fas fa-user"></i></a>
+        <a href="cart.html" class="nav-icon-btn" aria-label="Cart">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Product Detail Content -->
+  <main class="section" style="padding-top: 8rem;">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav style="margin-bottom: 2.5rem; font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 0.5rem; align-items: center;">
+        <a href="index.html" style="color: var(--text-secondary);">Home</a>
+        <span>/</span>
+        <a href="shop.html" style="color: var(--text-secondary);">Fragrances</a>
+        <span>/</span>
+        <span id="breadcrumb-product-name" style="color: var(--accent-gold);">Product Details</span>
+      </nav>
+
+      <!-- Main Product Grid -->
+      <div class="product-detail-layout">
+        <!-- Left: Image Gallery & 3D Tilt View -->
+        <div>
+          <div class="tilt-card bottle-aura product-main-stage">
+            <span id="product-sale-badge" class="product-badge sale" style="display: none; position: absolute; top: 1.5rem; left: 1.5rem;">Sale</span>
+            <img id="product-main-image" src="" alt="Flacon" style="max-height: 85%; max-width: 85%; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8)); transition: transform var(--transition-smooth);">
+          </div>
+
+          <!-- Thumbnails -->
+          <div id="product-gallery" style="display: flex; gap: 1rem; margin-top: 1.25rem; flex-wrap: wrap;"></div>
+        </div>
+
+        <!-- Right: Product Information & Purchase -->
+        <div>
+          <span id="product-category" style="font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent-gold); display: block; margin-bottom: 0.5rem;">EAU DE PARFUM</span>
+          
+          <h1 id="product-name" style="font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 1rem;">Fragrance Name</h1>
+          
+          <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.5rem;">
+            <span id="product-price" style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: #fff;">₹0</span>
+            <span id="product-original-price" style="font-size: 1.2rem; color: var(--text-muted); text-decoration: line-through;"></span>
+            <span id="product-stock" class="stock-status stock--in" style="margin-left: auto; font-size: 0.85rem; padding: 0.3rem 0.8rem; border-radius: var(--radius-full); background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3);">In Stock</span>
+          </div>
+
+          <p id="product-description" style="font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 2rem;">
+            Loading olfactory notes and spectral composition...
+          </p>
+
+          <!-- Size Selector -->
+          <div style="margin-bottom: 1.75rem;">
+            <label for="product-sizes" class="form-label" style="margin-bottom: 0.6rem;">Select Flacon Size</label>
+            <select id="product-sizes" class="form-select" style="max-width: 320px;"></select>
+          </div>
+
+          <!-- Quantity and Add to Cart -->
+          <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap;">
+            <div class="qty-control" style="padding: 0.5rem 0.75rem;">
+              <button class="qty-btn" onclick="let q=document.getElementById('product-qty'); if(q.value>1)q.value--;" aria-label="Decrease">&minus;</button>
+              <input type="number" id="product-qty" value="1" min="1" max="10" class="qty-input">
+              <button class="qty-btn" onclick="let q=document.getElementById('product-qty'); q.value++;" aria-label="Increase">&plus;</button>
+            </div>
+
+            <button id="add-to-cart-btn" class="btn btn--primary btn--lg btn-shimmer" style="flex-grow: 1; max-width: 360px;">
+              <i class="fas fa-shopping-bag"></i>
+              <span>Add to Private Cart</span>
+            </button>
+          </div>
+
+          <!-- Olfactory Pyramid -->
+          <div class="section-header" style="text-align: left; margin-bottom: 1rem;">
+            <span class="section-subtitle">Olfactory Structure</span>
+            <h3 style="font-size: 1.3rem;">Spectral Notes Pyramid</h3>
+          </div>
+          <div id="notes-pyramid">
+            <!-- Rendered by GhostProducts.renderNotesPyramid -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Products -->
+      <section style="margin-top: 6rem; padding-top: 4rem; border-top: 1px solid var(--border-subtle);">
+        <div class="section-header">
+          <span class="section-subtitle">Complementary Essences</span>
+          <h2 class="section-title">You May Also Seek</h2>
+        </div>
+        <div class="products-grid" id="related-products"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo"><i class="fas fa-ghost" style="color:var(--accent-purple);"></i><span>THE GHOST PERFUMES</span></div>
+          <p>Haute parfumerie inspired by the unseen. Luxury 3D bottle architecture housing rare spectral scents.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul class="footer-links">
+            <li><a href="shop.html">All Fragrances</a></li>
+            <li><a href="about.html">About Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Concierge</h4>
+          <ul class="footer-links">
+            <li><a href="contact.html">Private Inquiries</a></li>
+          </ul>
+        </div>
+        <div class="footer-col footer-newsletter">
+          <h4>Atelier</h4>
+          <p style="color:var(--accent-gold);"><i class="fas fa-envelope"></i> theghostperfumes@gmail.com</p>
+          <p style="color:var(--text-secondary);margin-top:0.35rem;font-size:0.85rem;"><i class="fas fa-phone"></i> +91 7874848643 / 7046626097</p>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2026 THE GHOST PERFUMES. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Back to Top"><i class="fas fa-chevron-up"></i></button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
+  <div id="modal-container"></div>
+</body>
+</html>

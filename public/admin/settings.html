@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Content Settings — THE GHOST PERFUMES Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-ghost"></i>
+                <span>Ghost Perfumes</span>
+            </div>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="sidebar-link" data-page="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="add-product.html" class="sidebar-link" data-page="add-product">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Product</span>
+            </a>
+            <a href="orders.html" class="sidebar-link" data-page="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="settings.html" class="sidebar-link active" data-page="settings">
+                <i class="fas fa-sliders-h"></i>
+                <span>Store Content</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-user-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-user-details">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role">Administrator</span>
+                </div>
+            </div>
+            <a href="../index.html" class="sidebar-link" target="_blank">
+                <i class="fas fa-store"></i>
+                <span>View Storefront</span>
+            </a>
+            <button class="sidebar-link logout-btn" id="adminLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Store Content &amp; Tagline Settings</h1>
+                <p class="page-subtitle">Customize the home page hero tagline, title, and About Us story</p>
+            </div>
+            <div class="topbar-right">
+                <a href="../index.html" class="btn-admin btn-admin--outline" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Preview Storefront
+                </a>
+            </div>
+        </header>
+
+        <div class="form-container">
+            <form id="storeSettingsForm" class="admin-form" novalidate>
+                <div class="form-grid">
+                    <!-- Left: Hero Section Settings -->
+                    <div class="form-column">
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-wand-magic-sparkles"></i> Home Page Hero Section
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <div class="form-group">
+                                    <label for="heroTagline" class="form-label">Hero Small Tagline (Golden Subtitle)</label>
+                                    <input type="text" id="heroTagline" class="form-input" placeholder="e.g. Ethereal Haute Parfumerie">
+                                    <span class="form-hint">Appears above the main headline in gold uppercase</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="heroTitle" class="form-label">Hero Main Title (Headline) <span class="required">*</span></label>
+                                    <input type="text" id="heroTitle" class="form-input" required placeholder="e.g. Where Fragrance Meets the Ethereal">
+                                    <span class="form-hint">The central 3D animated headline on the homepage</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="heroDescription" class="form-label">Hero Description Paragraph</label>
+                                    <textarea id="heroDescription" class="form-input form-textarea" rows="4" placeholder="Rare phantom botanicals, midnight smoke, and obsidian flacons distilled in darkness."></textarea>
+                                    <span class="form-hint">Subtitle paragraph displayed below the headline</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- About Us Story Section -->
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-book-open"></i> About Us &amp; Brand Philosophy Story
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <div class="form-group">
+                                    <label for="aboutSubtitle" class="form-label">About Section Subtitle</label>
+                                    <input type="text" id="aboutSubtitle" class="form-input" placeholder="e.g. Distillation of the Unseen">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="aboutHeading" class="form-label">About Story Main Heading</label>
+                                    <input type="text" id="aboutHeading" class="form-input" placeholder="e.g. Crafted in Darkness, Revealed in Heat">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="aboutStory1" class="form-label">Story Paragraph 1</label>
+                                    <textarea id="aboutStory1" class="form-input form-textarea" rows="4" placeholder="Enter brand origin and history..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="aboutStory2" class="form-label">Story Paragraph 2</label>
+                                    <textarea id="aboutStory2" class="form-input form-textarea" rows="4" placeholder="Enter philosophy and craft process..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="aboutQuote" class="form-label">Brand Quote</label>
+                                    <input type="text" id="aboutQuote" class="form-input" placeholder='e.g. "We believe true luxury does not shout..."'>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column: Save & Reset -->
+                    <div class="form-column form-column--aside">
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-save"></i> Save Content
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <button type="submit" class="btn-admin btn-admin--primary btn-admin--full" id="saveSettingsBtn">
+                                    <i class="fas fa-cloud-arrow-up"></i>
+                                    <span>Update Storefront Live</span>
+                                </button>
+                                <button type="button" class="btn-admin btn-admin--outline btn-admin--full" style="margin-top: 10px;" id="resetDefaultsBtn">
+                                    <i class="fas fa-undo"></i> Reset to Default
+                                </button>
+                            </div>
+                        </section>
+
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-circle-info"></i> How it Works
+                                </h2>
+                            </div>
+                            <div class="admin-card__body" style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+                                <p style="margin-bottom:0.75rem;">
+                                    <strong>Instant Reflection:</strong> Any changes saved here sync directly to Firestore and local cache.
+                                </p>
+                                <p style="margin:0;">
+                                    When customers visit the website, your updated headline, tagline, and brand story appear immediately!
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+
+    <script>
+      // ── Strict Admin Gate ──────────────────────────────────────
+      (function() {
+        var ADMIN_WHITELIST = [
+          'uditrmistry@gmail.com',
+          'uditmistryrajeshkumar@gmail.com',
+          'nayakaditya736@gmail.com'
+        ];
+        try {
+          var saved = JSON.parse(localStorage.getItem('ghost_auth_user') || 'null');
+          var email = saved && saved.email ? saved.email.trim().toLowerCase() : '';
+          if (!email || ADMIN_WHITELIST.indexOf(email) === -1) {
+            window.location.replace('../login.html?admin=required');
+          }
+        } catch(e) {
+          window.location.replace('../login.html?admin=required');
+        }
+      })();
+
+      // ── Load & Save Settings Handler ───────────────────────────
+      document.addEventListener('DOMContentLoaded', async () => {
+        const DEFAULT_SETTINGS = {
+          heroTagline: 'Ethereal Haute Parfumerie',
+          heroTitle: 'Where Fragrance Meets the Ethereal',
+          heroDescription: 'Rare phantom botanicals, midnight smoke, and obsidian flacons distilled in darkness. Step beyond the veil and wear the scent of eternity.',
+          aboutSubtitle: 'Distillation of the Unseen',
+          aboutHeading: 'Crafted in Darkness, Revealed in Heat',
+          aboutStory1: 'Founded by olfactory sculptors and 3D industrial architects, THE GHOST PERFUMES was forged from a singular obsession: to bottle the invisible vibrations of space.',
+          aboutStory2: 'Every fragrance is aged in pitch-black volcanic chambers for seven moon cycles. The ingredients are never stripped of their raw celestial qualities; instead, they are amplified using bespoke cold-plasma extraction.',
+          aboutQuote: '"We believe that true luxury does not shout — it lingers like a spectral presence in an empty room, impossible to forget."'
+        };
+
+        function populateForm(data) {
+          document.getElementById('heroTagline').value = data.heroTagline || DEFAULT_SETTINGS.heroTagline;
+          document.getElementById('heroTitle').value = data.heroTitle || DEFAULT_SETTINGS.heroTitle;
+          document.getElementById('heroDescription').value = data.heroDescription || DEFAULT_SETTINGS.heroDescription;
+          document.getElementById('aboutSubtitle').value = data.aboutSubtitle || DEFAULT_SETTINGS.aboutSubtitle;
+          document.getElementById('aboutHeading').value = data.aboutHeading || DEFAULT_SETTINGS.aboutHeading;
+          document.getElementById('aboutStory1').value = data.aboutStory1 || DEFAULT_SETTINGS.aboutStory1;
+          document.getElementById('aboutStory2').value = data.aboutStory2 || DEFAULT_SETTINGS.aboutStory2;
+          document.getElementById('aboutQuote').value = data.aboutQuote || DEFAULT_SETTINGS.aboutQuote;
+        }
+
+        // 1. Try local settings first
+        let currentSettings = JSON.parse(localStorage.getItem('ghost_store_settings') || 'null') || DEFAULT_SETTINGS;
+        populateForm(currentSettings);
+
+        // 2. Try Firestore if available
+        if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
+          try {
+            const doc = await GhostFirebase.db.collection('settings').doc('storeContent').get();
+            if (doc.exists) {
+              currentSettings = { ...DEFAULT_SETTINGS, ...doc.data() };
+              populateForm(currentSettings);
+              localStorage.setItem('ghost_store_settings', JSON.stringify(currentSettings));
+            }
+          } catch(e) {
+            console.warn('Could not read cloud settings:', e.message);
+          }
+        }
+
+        // Form submit
+        const form = document.getElementById('storeSettingsForm');
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const saveBtn = document.getElementById('saveSettingsBtn');
+          saveBtn.disabled = true;
+
+          const updated = {
+            heroTagline: document.getElementById('heroTagline').value.trim(),
+            heroTitle: document.getElementById('heroTitle').value.trim(),
+            heroDescription: document.getElementById('heroDescription').value.trim(),
+            aboutSubtitle: document.getElementById('aboutSubtitle').value.trim(),
+            aboutHeading: document.getElementById('aboutHeading').value.trim(),
+            aboutStory1: document.getElementById('aboutStory1').value.trim(),
+            aboutStory2: document.getElementById('aboutStory2').value.trim(),
+            aboutQuote: document.getElementById('aboutQuote').value.trim(),
+            updatedAt: new Date().toISOString()
+          };
+
+          // Save local
+          localStorage.setItem('ghost_store_settings', JSON.stringify(updated));
+
+          // Save Firestore
+          try {
+            if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
+              await GhostFirebase.db.collection('settings').doc('storeContent').set(updated, { merge: true });
+            }
+          } catch(err) {
+            console.warn('Firestore settings write:', err.message);
+          }
+
+          if (typeof showToast === 'function') {
+            showToast('Storefront content and hero tagline updated live!', 'success');
+          } else {
+            alert('Settings updated successfully!');
+          }
+
+          saveBtn.disabled = false;
+        });
+
+        // Reset button
+        document.getElementById('resetDefaultsBtn').addEventListener('click', () => {
+          if (confirm('Reset all storefront text and tagline back to default values?')) {
+            populateForm(DEFAULT_SETTINGS);
+            localStorage.setItem('ghost_store_settings', JSON.stringify(DEFAULT_SETTINGS));
+            if (typeof showToast === 'function') showToast('Default values restored.', 'info');
+          }
+        });
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product — THE GHOST PERFUMES Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-ghost"></i>
+                <span>Ghost Perfumes</span>
+            </div>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="sidebar-link" data-page="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="add-product.html" class="sidebar-link active" data-page="add-product">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Product</span>
+            </a>
+            <a href="orders.html" class="sidebar-link" data-page="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="settings.html" class="sidebar-link" data-page="settings">
+                <i class="fas fa-sliders-h"></i>
+                <span>Store Content</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-user-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-user-details">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role">Administrator</span>
+                </div>
+            </div>
+            <a href="../index.html" class="sidebar-link">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <button class="sidebar-link logout-btn" id="adminLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1 class="page-title" id="pageTitle">Add New Product</h1>
+                <p class="page-subtitle">Create a new fragrance for the collection</p>
+            </div>
+            <div class="topbar-right">
+                <a href="products.html" class="btn-admin btn-admin--outline">
+                    <i class="fas fa-arrow-left"></i> Back to Products
+                </a>
+            </div>
+        </header>
+
+        <!-- Add Product Form -->
+        <div class="form-container">
+            <form id="productForm" class="admin-form" novalidate>
+                <input type="hidden" id="productId" value="">
+
+                <div class="form-grid">
+                    <!-- Left Column — Product Details -->
+                    <div class="form-column">
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-info-circle"></i> Product Details
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <!-- Name -->
+                                <div class="form-group">
+                                    <label for="productName" class="form-label">Product Name <span class="required">*</span></label>
+                                    <input type="text" id="productName" class="form-input" placeholder="e.g., Phantom Noir Eau de Parfum" required>
+                                    <span class="form-error" id="nameError"></span>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="form-group">
+                                    <label for="productDescription" class="form-label">Description <span class="required">*</span></label>
+                                    <textarea id="productDescription" class="form-input form-textarea" rows="5" placeholder="Describe the fragrance's story and character..." required></textarea>
+                                    <span class="form-error" id="descError"></span>
+                                </div>
+
+                                <!-- Price & Stock Row -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="productPrice" class="form-label">Price (₹) <span class="required">*</span></label>
+                                        <input type="number" id="productPrice" class="form-input" placeholder="0.00" min="0" step="0.01" required>
+                                        <span class="form-error" id="priceError"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productStock" class="form-label">Stock Quantity <span class="required">*</span></label>
+                                        <input type="number" id="productStock" class="form-input" placeholder="0" min="0" step="1" required>
+                                        <span class="form-error" id="stockError"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Category & Size Row -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="productCategory" class="form-label">Category <span class="required">*</span></label>
+                                        <select id="productCategory" class="form-input form-select" required>
+                                            <option value="">Select Category</option>
+                                            <option value="men">Men</option>
+                                            <option value="women">Women</option>
+                                            <option value="unisex">Unisex</option>
+                                        </select>
+                                        <span class="form-error" id="categoryError"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productSize" class="form-label">Size</label>
+                                        <select id="productSize" class="form-input form-select" multiple>
+                                            <option value="30ml">30ml</option>
+                                            <option value="50ml">50ml</option>
+                                            <option value="75ml">75ml</option>
+                                            <option value="100ml">100ml</option>
+                                            <option value="150ml">150ml</option>
+                                            <option value="200ml">200ml</option>
+                                        </select>
+                                        <span class="form-hint">Hold Ctrl/Cmd to select multiple sizes</span>
+                                    </div>
+                                </div>
+
+                                <!-- Featured Toggle -->
+                                <div class="form-group">
+                                    <label class="form-label">Featured Product</label>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="productFeatured">
+                                        <span class="toggle-slider"></span>
+                                        <span class="toggle-label">Display on homepage & featured sections</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Fragrance Notes Section -->
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-wind"></i> Fragrance Notes
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <div class="form-group">
+                                    <label for="topNotes" class="form-label">Top Notes</label>
+                                    <input type="text" id="topNotes" class="form-input" placeholder="e.g., Bergamot, Lemon, Pink Pepper">
+                                    <span class="form-hint">Comma-separated — the first impression of the scent</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="middleNotes" class="form-label">Middle Notes (Heart)</label>
+                                    <input type="text" id="middleNotes" class="form-input" placeholder="e.g., Rose, Jasmine, Iris">
+                                    <span class="form-hint">Comma-separated — the core of the fragrance</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="baseNotes" class="form-label">Base Notes</label>
+                                    <input type="text" id="baseNotes" class="form-input" placeholder="e.g., Oud, Musk, Amber, Vanilla">
+                                    <span class="form-hint">Comma-separated — the lasting foundation</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column — Image -->
+                    <div class="form-column form-column--aside">
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-image"></i> Product Image
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <div class="form-group">
+                                    <label for="productImage" class="form-label">Image URL <span class="required">*</span></label>
+                                    <input type="text" id="productImage" class="form-input" placeholder="https://images.unsplash.com/... or upload below" required>
+                                    <span class="form-error" id="imageError"></span>
+                                </div>
+                                <div class="form-group" style="margin-top: 1rem;">
+                                    <label class="form-label">Or Upload Device Image</label>
+                                    <input type="file" id="productImageFile" accept="image/*" class="form-input" style="padding: 0.5rem; cursor: pointer;">
+                                    <span class="form-hint">Upload JPEG, PNG or WebP flacon photo from device</span>
+                                </div>
+                                <div class="image-preview-container" style="margin-top: 1.25rem;">
+                                    <div class="image-preview" id="imagePreview">
+                                        <i class="fas fa-image"></i>
+                                        <p>Image preview will appear here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Form Actions -->
+                        <section class="admin-card">
+                            <div class="admin-card__header">
+                                <h2 class="admin-card__title">
+                                    <i class="fas fa-save"></i> Actions
+                                </h2>
+                            </div>
+                            <div class="admin-card__body">
+                                <button type="submit" class="btn-admin btn-admin--primary btn-admin--full" id="submitBtn">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span id="submitBtnText">Add Product</span>
+                                </button>
+                                <button type="reset" class="btn-admin btn-admin--outline btn-admin--full" style="margin-top: 10px;" id="resetBtn">
+                                    <i class="fas fa-undo"></i> Reset Form
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="admin-loading-overlay" id="adminLoadingOverlay">
+        <div class="admin-spinner">
+            <i class="fas fa-ghost fa-spin"></i>
+            <p>Loading admin panel...</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/products.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      // ── Strict Admin Gate ──────────────────────────────────────
+      (function() {
+        var ADMIN_WHITELIST = [
+          'uditrmistry@gmail.com',
+          'uditmistryrajeshkumar@gmail.com',
+          'nayakaditya736@gmail.com'
+        ];
+        try {
+          var saved = JSON.parse(localStorage.getItem('ghost_auth_user') || 'null');
+          var email = saved && saved.email ? saved.email.trim().toLowerCase() : '';
+          if (!email || ADMIN_WHITELIST.indexOf(email) === -1) {
+            window.location.replace('../login.html?admin=required');
+          }
+        } catch(e) {
+          window.location.replace('../login.html?admin=required');
+        }
+      })();
+    </script>
+</body>
+</html>

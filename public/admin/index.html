@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — THE GHOST PERFUMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-ghost"></i>
+                <span>Ghost Perfumes</span>
+            </div>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link active" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="sidebar-link" data-page="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="add-product.html" class="sidebar-link" data-page="add-product">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Product</span>
+            </a>
+            <a href="orders.html" class="sidebar-link" data-page="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="settings.html" class="sidebar-link" data-page="settings">
+                <i class="fas fa-sliders-h"></i>
+                <span>Store Content</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-user-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-user-details">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role">Administrator</span>
+                </div>
+            </div>
+            <a href="../index.html" class="sidebar-link">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <button class="sidebar-link logout-btn" id="adminLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Welcome back, <span id="welcomeName">Admin</span></p>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-date">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <section class="stats-grid">
+            <div class="stat-card stat-card--products">
+                <div class="stat-card__icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="statTotalProducts">0</span>
+                    <span class="stat-card__label">Total Products</span>
+                </div>
+                <div class="stat-card__trend trend--up">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card--orders">
+                <div class="stat-card__icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="statTotalOrders">0</span>
+                    <span class="stat-card__label">Total Orders</span>
+                </div>
+                <div class="stat-card__trend trend--up">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card--revenue">
+                <div class="stat-card__icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="statRevenue">₹0</span>
+                    <span class="stat-card__label">Total Revenue</span>
+                </div>
+                <div class="stat-card__trend trend--up">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+
+            <div class="stat-card stat-card--users">
+                <div class="stat-card__icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="statActiveUsers">0</span>
+                    <span class="stat-card__label">Active Users</span>
+                </div>
+                <div class="stat-card__trend trend--neutral">
+                    <i class="fas fa-minus"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Content Grid -->
+        <div class="dashboard-grid">
+            <!-- Recent Orders -->
+            <section class="admin-card dashboard-orders">
+                <div class="admin-card__header">
+                    <h2 class="admin-card__title">
+                        <i class="fas fa-clock"></i> Recent Orders
+                    </h2>
+                    <a href="orders.html" class="admin-card__action">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="admin-card__body">
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                                <tr class="table-empty-row">
+                                    <td colspan="5">
+                                        <div class="table-empty">
+                                            <i class="fas fa-inbox"></i>
+                                            <p>No orders yet</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="admin-card dashboard-actions">
+                <div class="admin-card__header">
+                    <h2 class="admin-card__title">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h2>
+                </div>
+                <div class="admin-card__body">
+                    <div class="quick-actions-grid">
+                        <a href="add-product.html" class="quick-action-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add New Product</span>
+                        </a>
+                        <a href="products.html" class="quick-action-btn">
+                            <i class="fas fa-edit"></i>
+                            <span>Manage Products</span>
+                        </a>
+                        <a href="orders.html" class="quick-action-btn">
+                            <i class="fas fa-truck"></i>
+                            <span>Process Orders</span>
+                        </a>
+                        <a href="../index.html" class="quick-action-btn" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>Visit Storefront</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Low Stock Alert -->
+            <section class="admin-card dashboard-low-stock">
+                <div class="admin-card__header">
+                    <h2 class="admin-card__title">
+                        <i class="fas fa-exclamation-triangle"></i> Low Stock Alert
+                    </h2>
+                </div>
+                <div class="admin-card__body">
+                    <div id="lowStockList" class="low-stock-list">
+                        <div class="table-empty">
+                            <i class="fas fa-check-circle"></i>
+                            <p>All products are well-stocked</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="admin-loading-overlay" id="adminLoadingOverlay">
+        <div class="admin-spinner">
+            <i class="fas fa-ghost fa-spin"></i>
+            <p>Loading admin panel...</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/products.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      // ── Strict Admin Gate ──────────────────────────────────────
+      (function() {
+        const ADMIN_WHITELIST = [
+          'uditrmistry@gmail.com',
+          'uditmistryrajeshkumar@gmail.com',
+          'nayakaditya736@gmail.com'
+        ];
+        try {
+          const saved = JSON.parse(localStorage.getItem('ghost_auth_user') || 'null');
+          const email = saved && saved.email ? saved.email.trim().toLowerCase() : '';
+          if (!email || !ADMIN_WHITELIST.includes(email)) {
+            window.location.replace('../login.html?admin=required');
+          }
+        } catch(e) {
+          window.location.replace('../login.html?admin=required');
+        }
+      })();
+    </script>
+</body>
+</html>

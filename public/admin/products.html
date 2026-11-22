@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Management — THE GHOST PERFUMES Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-ghost"></i>
+                <span>Ghost Perfumes</span>
+            </div>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="sidebar-link active" data-page="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="add-product.html" class="sidebar-link" data-page="add-product">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Product</span>
+            </a>
+            <a href="orders.html" class="sidebar-link" data-page="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="settings.html" class="sidebar-link" data-page="settings">
+                <i class="fas fa-sliders-h"></i>
+                <span>Store Content</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-user-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-user-details">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role">Administrator</span>
+                </div>
+            </div>
+            <a href="../index.html" class="sidebar-link">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <button class="sidebar-link logout-btn" id="adminLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Products Management</h1>
+                <p class="page-subtitle">Manage your fragrance collection</p>
+            </div>
+            <div class="topbar-right">
+                <a href="add-product.html" class="btn-admin btn-admin--primary">
+                    <i class="fas fa-plus-circle"></i> Add Product
+                </a>
+            </div>
+        </header>
+
+        <!-- Filters Bar -->
+        <section class="admin-card">
+            <div class="admin-card__body">
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label class="filter-label">Category:</label>
+                        <div class="filter-buttons" id="productCategoryFilter">
+                            <button class="filter-btn active" data-category="all">All</button>
+                            <button class="filter-btn" data-category="men">Men</button>
+                            <button class="filter-btn" data-category="women">Women</button>
+                            <button class="filter-btn" data-category="unisex">Unisex</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="productSearchInput" class="form-input" placeholder="Search products by name...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Table -->
+        <section class="admin-card">
+            <div class="admin-card__header">
+                <h2 class="admin-card__title">
+                    <i class="fas fa-box"></i> All Products
+                    <span class="count-badge" id="productsCount">0</span>
+                </h2>
+            </div>
+            <div class="admin-card__body">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr class="table-empty-row">
+                                <td colspan="7">
+                                    <div class="table-empty">
+                                        <i class="fas fa-box-open"></i>
+                                        <p>No products found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="admin-modal-overlay" id="deleteConfirmModal">
+        <div class="admin-modal admin-modal--small">
+            <div class="admin-modal__header">
+                <h2 class="admin-modal__title">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--admin-danger);"></i> Confirm Delete
+                </h2>
+                <button class="admin-modal__close" id="closeDeleteModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal__body">
+                <p class="delete-confirm-text">Are you sure you want to delete <strong id="deleteProductName"></strong>?</p>
+                <p class="delete-confirm-warning">This action cannot be undone.</p>
+            </div>
+            <div class="admin-modal__footer">
+                <button class="btn-admin btn-admin--outline" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn-admin btn-admin--danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Delete Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="admin-loading-overlay" id="adminLoadingOverlay">
+        <div class="admin-spinner">
+            <i class="fas fa-ghost fa-spin"></i>
+            <p>Loading admin panel...</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/products.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      // ── Strict Admin Gate ──────────────────────────────────────
+      (function() {
+        var ADMIN_WHITELIST = [
+          'uditrmistry@gmail.com',
+          'uditmistryrajeshkumar@gmail.com',
+          'nayakaditya736@gmail.com'
+        ];
+        try {
+          var saved = JSON.parse(localStorage.getItem('ghost_auth_user') || 'null');
+          var email = saved && saved.email ? saved.email.trim().toLowerCase() : '';
+          if (!email || ADMIN_WHITELIST.indexOf(email) === -1) {
+            window.location.replace('../login.html?admin=required');
+          }
+        } catch(e) {
+          window.location.replace('../login.html?admin=required');
+        }
+      })();
+    </script>
+</body>
+</html>

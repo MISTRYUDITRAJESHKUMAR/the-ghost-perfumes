@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management — THE GHOST PERFUMES Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-ghost"></i>
+                <span>Ghost Perfumes</span>
+            </div>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="sidebar-link" data-page="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="add-product.html" class="sidebar-link" data-page="add-product">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Product</span>
+            </a>
+            <a href="orders.html" class="sidebar-link active" data-page="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-user-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-user-details">
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role">Administrator</span>
+                </div>
+            </div>
+            <a href="../index.html" class="sidebar-link">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <button class="sidebar-link logout-btn" id="adminLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Orders Management</h1>
+                <p class="page-subtitle">Track and manage customer orders</p>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-date">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Filters Bar -->
+        <section class="admin-card">
+            <div class="admin-card__body">
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label class="filter-label">Filter by Status:</label>
+                        <div class="filter-buttons" id="orderStatusFilter">
+                            <button class="filter-btn active" data-status="all">All</button>
+                            <button class="filter-btn" data-status="pending">Pending</button>
+                            <button class="filter-btn" data-status="processing">Processing</button>
+                            <button class="filter-btn" data-status="shipped">Shipped</button>
+                            <button class="filter-btn" data-status="delivered">Delivered</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="orderSearchInput" class="form-input" placeholder="Search orders by ID or customer...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Table -->
+        <section class="admin-card">
+            <div class="admin-card__header">
+                <h2 class="admin-card__title">
+                    <i class="fas fa-list"></i> All Orders
+                    <span class="count-badge" id="ordersCount">0</span>
+                </h2>
+            </div>
+            <div class="admin-card__body">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr class="table-empty-row">
+                                <td colspan="7">
+                                    <div class="table-empty">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No orders found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Order Detail Modal -->
+    <div class="admin-modal-overlay" id="orderDetailModal">
+        <div class="admin-modal">
+            <div class="admin-modal__header">
+                <h2 class="admin-modal__title">
+                    <i class="fas fa-receipt"></i> Order Details
+                </h2>
+                <button class="admin-modal__close" id="closeOrderModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal__body" id="orderDetailContent">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="admin-modal__footer">
+                <div class="modal-status-update">
+                    <label class="form-label">Update Status:</label>
+                    <select id="modalStatusSelect" class="form-input form-select">
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                    <button class="btn-admin btn-admin--primary" id="modalUpdateStatusBtn">
+                        <i class="fas fa-check"></i> Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="admin-loading-overlay" id="adminLoadingOverlay">
+        <div class="admin-spinner">
+            <i class="fas fa-ghost fa-spin"></i>
+            <p>Loading admin panel...</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/products.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      // ── Strict Admin Gate ──────────────────────────────────────
+      (function() {
+        var ADMIN_WHITELIST = [
+          'uditrmistry@gmail.com',
+          'uditmistryrajeshkumar@gmail.com',
+          'nayakaditya736@gmail.com'
+        ];
+        try {
+          var saved = JSON.parse(localStorage.getItem('ghost_auth_user') || 'null');
+          var email = saved && saved.email ? saved.email.trim().toLowerCase() : '';
+          if (!email || ADMIN_WHITELIST.indexOf(email) === -1) {
+            window.location.replace('../login.html?admin=required');
+          }
+        } catch(e) {
+          window.location.replace('../login.html?admin=required');
+        }
+      })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE GHOST PERFUMES — Ethereal Haute Parfumerie</title>
+  <meta name="description" content="Where Fragrance Meets the Ethereal. Discover luxury 3D bespoke fragrances crafted for the phantom soul.">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display:none;opacity:0;pointer-events:none;">
+    <div class="ghost-spinner">
+      <i class="fas fa-ghost"></i>
+    </div>
+    <span class="loading-text">Awakening the Scent...</span>
+  </div>
+
+  <!-- Ghost Canvas Background -->
+  <canvas id="ghost-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.4;"></canvas>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <i class="fas fa-ghost"></i>
+        <span>THE GHOST PERFUMES</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="shop.html" class="nav-link">Fragrances</a></li>
+        <li><a href="about.html" class="nav-link">Our Alchemy</a></li>
+        <li><a href="contact.html" class="nav-link">Concierge</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="shop.html" class="nav-icon-btn" aria-label="Search Fragrances">
+          <i class="fas fa-search"></i>
+        </a>
+        <a href="login.html" class="nav-icon-btn" id="authBtn" aria-label="Account">
+          <i class="fas fa-user"></i>
+        </a>
+        <a href="cart.html" class="nav-icon-btn" aria-label="Shopping Cart">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <span class="hero-tagline reveal revealed">Ethereal Haute Parfumerie</span>
+      <h1 class="hero-title reveal revealed">Where Fragrance Meets the Ethereal</h1>
+      <p class="hero-description reveal revealed">
+        Rare phantom botanicals, midnight smoke, and obsidian flacons distilled in darkness. Step beyond the veil and wear the scent of eternity.
+      </p>
+      <div class="hero-actions reveal revealed">
+        <a href="shop.html" class="btn btn--primary btn--lg btn-shimmer">
+          <span>Explore Collection</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        <a href="#about" class="btn btn--ghost btn--lg">
+          <span>Our Story</span>
+        </a>
+      </div>
+
+      <div class="hero-badges reveal revealed">
+        <div class="hero-badge-item">
+          <span class="hero-badge-number">100%</span>
+          <span class="hero-badge-label">Rare Pure Extract</span>
+        </div>
+        <div class="hero-badge-item">
+          <span class="hero-badge-number">48H</span>
+          <span class="hero-badge-label">Spectral Longevity</span>
+        </div>
+        <div class="hero-badge-item">
+          <span class="hero-badge-number">3D</span>
+          <span class="hero-badge-label">Bespoke Flacons</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Featured Fragrances Section -->
+  <section class="section" id="featured">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">Private Reserve</span>
+        <h2 class="section-title">Iconic Fragrances</h2>
+        <p class="section-desc">Each flacon is carved from midnight crystal with multidimensional notes that evolve on your skin.</p>
+      </div>
+
+      <!-- Dynamic Featured Grid from Firestore / Local Fallback -->
+      <div class="products-grid" id="featured-products">
+        <!-- Rendered dynamically by GhostProducts -->
+      </div>
+
+      <div style="text-align:center;margin-top:3.5rem;">
+        <a href="shop.html" class="btn btn--gold btn--lg">
+          <span>View All Perfumes</span>
+          <i class="fas fa-sparkles"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">Curated Realms</span>
+        <h2 class="section-title">Explore by Essence</h2>
+      </div>
+
+      <div class="categories-grid">
+        <a href="shop.html?category=men" class="category-card tilt-card">
+          <div class="category-card__bg" style="background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80');"></div>
+          <div class="category-card__overlay">
+            <span class="category-card__count">Dark Wood & Smoke</span>
+            <h3 class="category-card__title">For Men</h3>
+            <span class="btn btn--ghost btn--sm">Enter Realm &rarr;</span>
+          </div>
+        </a>
+
+        <a href="shop.html?category=women" class="category-card tilt-card">
+          <div class="category-card__bg" style="background-image: url('https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80');"></div>
+          <div class="category-card__overlay">
+            <span class="category-card__count">Spectral Florals & Amber</span>
+            <h3 class="category-card__title">For Women</h3>
+            <span class="btn btn--ghost btn--sm">Enter Realm &rarr;</span>
+          </div>
+        </a>
+
+        <a href="shop.html?category=unisex" class="category-card tilt-card">
+          <div class="category-card__bg" style="background-image: url('https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80');"></div>
+          <div class="category-card__overlay">
+            <span class="category-card__count">Rare Pure Alchemy</span>
+            <h3 class="category-card__title">Unisex Haute</h3>
+            <span class="btn btn--ghost btn--sm">Enter Realm &rarr;</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Philosophy / About Section -->
+  <section class="section" id="about">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;">
+        <div class="tilt-card" style="position:relative;">
+          <div style="border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border-glow);box-shadow:var(--shadow-glow);">
+            <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80" alt="Ghost Perfume Flacon in Mist" style="width:100%;height:520px;object-fit:cover;">
+          </div>
+          <div style="position:absolute;bottom:-20px;right:-20px;background:var(--bg-glass-strong);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:1.5rem;backdrop-filter:blur(15px);max-width:240px;">
+            <i class="fas fa-gem" style="color:var(--accent-gold);font-size:1.5rem;margin-bottom:0.5rem;"></i>
+            <h4 style="font-size:0.95rem;margin-bottom:0.25rem;">Hand-Poured</h4>
+            <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Numbered editions aged under starlight.</p>
+          </div>
+        </div>
+
+        <div>
+          <span class="section-subtitle">Our Supernatural Craft</span>
+          <h2 style="font-size:2.8rem;margin-bottom:1.5rem;">Born from Shadows, Wearable as Light</h2>
+          <p style="font-size:1.1rem;margin-bottom:1.25rem;line-height:1.7;">
+            THE GHOST PERFUMES exists at the intersection of haute perfumery and spectral illusion. We do not blend ordinary colognes — we distill memories, phantoms, and ethereal silences.
+          </p>
+          <p style="color:var(--text-secondary);margin-bottom:2rem;line-height:1.7;">
+            Our flacons are engineered with 3D sculpted geometry and capacitive crystal caps that preserve the volatility of rare Himalayan oud, night-blooming jasmine, and white obsidian resin.
+          </p>
+          <div style="display:flex;gap:2rem;">
+            <div>
+              <h3 style="color:var(--accent-gold);font-size:2rem;margin-bottom:0.25rem;">0%</h3>
+              <p style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;">Synthetic Fillers</p>
+            </div>
+            <div>
+              <h3 style="color:var(--accent-purple);font-size:2rem;margin-bottom:0.25rem;">80+</h3>
+              <p style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;">Global Rare Botanicals</p>
+            </div>
+            <div>
+              <h3 style="color:var(--accent-cyan);font-size:2rem;margin-bottom:0.25rem;">7</h3>
+              <p style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;">Moon Ageing Cycles</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="section" style="background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.12) 0%, rgba(7, 7, 10, 1) 80%);">
+    <div class="container" style="max-width:760px;text-align:center;">
+      <i class="fas fa-ghost" style="font-size:3rem;color:var(--accent-purple);margin-bottom:1.5rem;filter:drop-shadow(0 0 20px var(--accent-purple));"></i>
+      <h2 style="font-size:2.4rem;margin-bottom:1rem;">Enter The Spectral Circle</h2>
+      <p style="font-size:1.1rem;margin-bottom:2rem;">Receive midnight invitations to limited private drops, bespoke olfactory compositions, and phantom exhibitions.</p>
+      
+      <form id="newsletter-form" style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+        <input type="email" placeholder="Enter your email address..." required style="flex-grow:1;max-width:420px;padding:1rem 1.5rem;background:rgba(255,255,255,0.05);border:1px solid var(--border-glow);border-radius:var(--radius-sm);color:#fff;font-family:var(--font-body);outline:none;">
+        <button type="submit" class="btn btn--primary">
+          <span>Join Circle</span>
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <i class="fas fa-ghost" style="color:var(--accent-purple);"></i>
+            <span>THE GHOST PERFUMES</span>
+          </div>
+          <p>
+            Haute parfumerie inspired by the unseen. Luxury 3D bottle architecture housing the most rare spectral scents ever distilled.
+          </p>
+          <div class="social-links" style="margin-top:1.5rem;">
+            <a href="https://www.instagram.com/theghostperfumes?hvrq=MXRkNHNxMzUyNTI3cA==" target="_blank" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" class="social-link" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Sanctuary</h4>
+          <ul class="footer-links">
+            <li><a href="shop.html">All Fragrances</a></li>
+            <li><a href="shop.html?category=men">Men's Reserve</a></li>
+            <li><a href="shop.html?category=women">Women's Essences</a></li>
+            <li><a href="shop.html?category=unisex">Unisex Elixirs</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Ethereal</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">The Alchemist</a></li>
+            <li><a href="contact.html">Concierge Service</a></li>
+            <li><a href="cart.html">View Cart</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col footer-newsletter">
+          <h4>Ghost Atelier</h4>
+          <p>239 Anandnagar, Sector-27<br>Gandhinagar, Gujarat, India</p>
+          <p style="color:var(--accent-gold);margin-top:0.5rem;"><i class="fas fa-envelope"></i> theghostperfumes@gmail.com</p>
+          <p style="color:var(--text-secondary);margin-top:0.35rem;font-size:0.85rem;"><i class="fas fa-phone"></i> +91 7874848643 / 7046626097</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 THE GHOST PERFUMES Inc. All rights reserved. Crafting the Unseen.</p>
+        <p>Built with Next-Gen 3D Web &amp; Firebase Cloud Database</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="back-to-top" aria-label="Back to Top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- External CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
+  <!-- Firebase Compat CDNs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Core Scripts -->
+  <script src="firebase-config.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Quick View Modal -->
+  <div id="modal-container"></div>
+</body>
+</html>

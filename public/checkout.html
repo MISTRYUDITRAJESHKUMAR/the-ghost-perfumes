@@ -1,0 +1,369 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — THE GHOST PERFUMES</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display:none;">
+    <div class="ghost-spinner"><i class="fas fa-ghost"></i></div>
+    <span class="loading-text" id="loading-overlay-text">Finalizing Secure Order...</span>
+  </div>
+
+  <canvas id="ghost-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.3;"></canvas>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <i class="fas fa-ghost"></i>
+        <span>THE GHOST PERFUMES</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="shop.html" class="nav-link">Fragrances</a></li>
+        <li><a href="about.html" class="nav-link">Our Alchemy</a></li>
+        <li><a href="contact.html" class="nav-link">Concierge</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="cart.html" class="nav-icon-btn" aria-label="Cart">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="section" style="padding-top: 8rem; min-height: 80vh;">
+    <div class="container">
+      <div class="section-header" style="text-align: left; margin-bottom: 2rem;">
+        <span class="section-subtitle">Secure Dispatch</span>
+        <h1 style="font-size: 2.8rem;">Checkout &amp; Delivery</h1>
+      </div>
+
+      <div class="checkout-layout">
+        <!-- Left: Delivery & WhatsApp Dispatch Details -->
+        <div>
+          <form id="checkout-form" class="checkout-form-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);">
+            <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--accent-gold); display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-map-marker-alt"></i> Delivery Destination (India)
+            </h3>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First Name <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="firstName" class="form-input" required placeholder="Your First Name">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last Name <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="lastName" class="form-input" required placeholder="Your Last Name">
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone / WhatsApp Number <span style="color:#ef4444;">*</span></label>
+                <input type="tel" id="phone" class="form-input" required placeholder="10 digit mobile number" pattern="[0-9]{10}">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="checkoutEmail">Email Address <span style="color:#ef4444;">*</span></label>
+                <input type="email" id="checkoutEmail" class="form-input" required placeholder="yourname@gmail.com">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="address">Full Delivery Address <span style="color:#ef4444;">*</span></label>
+              <input type="text" id="address" class="form-input" required placeholder="House/Flat No., Street, Colony, Landmark">
+            </div>
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label" for="city">City <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="city" class="form-input" required placeholder="e.g. Gandhinagar">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="state">State <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="state" class="form-input" required value="Gujarat" placeholder="Gujarat">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="zip">Pincode <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="zip" class="form-input" required placeholder="382027">
+              </div>
+            </div>
+
+            <h3 style="font-size: 1.25rem; margin: 2rem 0 1rem; color: var(--accent-gold); display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fab fa-whatsapp" style="color:#25d366;"></i> WhatsApp Delivery &amp; Payment
+            </h3>
+
+            <!-- WhatsApp Delivery Notice -->
+            <div style="background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.4); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+                <i class="fab fa-whatsapp" style="font-size:2rem;color:#25d366;"></i>
+                <div>
+                  <h4 style="font-size:1rem;color:#fff;margin:0;">Instant Direct WhatsApp Order Dispatch</h4>
+                  <p style="font-size:0.82rem;color:var(--text-secondary);margin:0;">Order details will open directly in WhatsApp to our team</p>
+                </div>
+              </div>
+              <p style="font-size:0.85rem;color:#cbd5e1;margin:0.5rem 0 0;line-height:1.5;">
+                💬 <strong>Payment Mode:</strong> You can choose <strong>UPI / Online (GPay / PhonePe / Paytm)</strong> or <strong>Cash on Delivery (COD)</strong> directly in WhatsApp chat with us.
+              </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+              <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(139, 92, 246, 0.1); border: 1px solid var(--accent-purple); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="radio" name="paymentPreference" value="UPI / Online Payment" checked style="accent-color: var(--accent-purple);">
+                <i class="fas fa-qrcode" style="color: var(--accent-gold); font-size: 1.25rem;"></i>
+                <div>
+                  <span style="font-weight: 600; display: block; color: #fff;">UPI / Online Payment (GPay, PhonePe, Paytm)</span>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Decide and confirm on WhatsApp chat</span>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="radio" name="paymentPreference" value="Cash On Delivery (COD)" style="accent-color: var(--accent-purple);">
+                <i class="fas fa-hand-holding-dollar" style="color: #22c55e; font-size: 1.25rem;"></i>
+                <div>
+                  <span style="font-weight: 600; display: block; color: #fff;">Cash On Delivery (COD)</span>
+                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Pay in cash when order is delivered</span>
+                </div>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn--lg btn--block btn-shimmer" style="background:#25d366;border-color:#25d366;color:#000;font-weight:700;font-size:1.1rem;padding:1rem;">
+              <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i>
+              <span>Seal &amp; Dispatch Order via WhatsApp</span>
+            </button>
+            <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
+              Sends order to +91 7874848643 &bull; +91 7046626097
+            </p>
+          </form>
+        </div>
+
+        <!-- Right: Order Items Summary -->
+        <aside class="cart-summary">
+          <h3 class="cart-summary__title">Selected Flacons</h3>
+          <div id="checkout-items-preview" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;"></div>
+
+          <div class="cart-summary__row"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
+          <div class="cart-summary__row"><span>Insured Delivery</span><span style="color: #22c55e;">FREE</span></div>
+          <div class="cart-summary__total"><span>Total Amount</span><span id="summary-total" style="color:var(--accent-gold);">₹0</span></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container" style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+      <p>&copy; 2026 THE GHOST PERFUMES. 256-Bit Encrypted Ethereal Transaction Protocol.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Checkout WhatsApp Dispatch Handler
+    document.addEventListener('DOMContentLoaded', async () => {
+      const items = await GhostCart.getItems();
+      const container = document.getElementById('checkout-items-preview');
+      const subtotalEl = document.getElementById('summary-subtotal');
+      const totalEl = document.getElementById('summary-total');
+
+      if (!items.length) {
+        container.innerHTML = '<p style="color:var(--text-muted);padding:1rem 0;">No items in your bag. <a href="shop.html" style="color:var(--accent-gold);text-decoration:underline;">Browse Fragrances</a></p>';
+        return;
+      }
+
+      const totals = GhostCart.calculateTotals(items);
+      subtotalEl.textContent = `₹${Number(totals.subtotal).toLocaleString('en-IN')}`;
+      totalEl.textContent = `₹${Number(totals.total).toLocaleString('en-IN')}`;
+
+      container.innerHTML = items.map(item => `
+        <div style="display:flex;gap:1rem;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.05);">
+          <img src="${item.image}" alt="${item.name}" style="width:50px;height:55px;object-fit:cover;border-radius:var(--radius-sm);background:#1a1a24;">
+          <div style="flex-grow:1;">
+            <h4 style="font-size:0.9rem;margin-bottom:0.2rem;color:#fff;">${item.name}</h4>
+            <span style="font-size:0.75rem;color:var(--text-muted);">Qty: ${item.quantity} ${item.size ? '• ' + item.size : ''}</span>
+          </div>
+          <span style="font-weight:700;color:var(--accent-gold);">₹${Number(item.price * item.quantity).toLocaleString('en-IN')}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('checkout-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const customerName = `${firstName} ${lastName}`.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('checkoutEmail').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const state = document.getElementById('state').value.trim();
+        const zip = document.getElementById('zip').value.trim();
+        const orderNotes = (document.getElementById('orderNotes')?.value || '').trim();
+        const paymentRadio = document.querySelector('input[name="paymentPreference"]:checked');
+        const paymentPreference = paymentRadio ? paymentRadio.value : 'UPI / Online Payment';
+
+        if (!phone || phone.length < 10) {
+          GhostApp.showToast('Please enter a valid 10-digit mobile number for WhatsApp delivery updates.', 'warning');
+          return;
+        }
+
+        const orderId = 'GHOST-' + Math.floor(Math.random() * 90000 + 10000);
+        const orderDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+        const orderData = {
+          orderId,
+          customerName,
+          phone,
+          email,
+          address,
+          city,
+          state,
+          zip,
+          orderNotes,
+          paymentPreference,
+          items,
+          total: totals.total,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        };
+
+        // 1. Instant LocalStorage Save (0ms reliable)
+        try {
+          const localOrders = JSON.parse(localStorage.getItem('ghost_orders') || '[]');
+          localOrders.unshift(orderData);
+          localStorage.setItem('ghost_orders', JSON.stringify(localOrders));
+        } catch (_) {}
+
+        // 2. Non-blocking Background Firestore Sync (never halts checkout)
+        try {
+          if (GhostFirebase && GhostFirebase.db) {
+            GhostFirebase.db.collection('orders').doc(orderId).set(orderData).catch(() => {});
+          }
+        } catch (_) {}
+
+        // 3. Construct Complete WhatsApp Message
+        let itemsListText = '';
+        items.forEach((item, idx) => {
+          itemsListText += `${idx + 1}. *${item.name}* (Qty: ${item.quantity}${item.size ? ', ' + item.size : ''}) — ₹${Number(item.price * item.quantity).toLocaleString('en-IN')}\n`;
+        });
+
+        const waMessage = 
+`👻 *NEW ORDER — THE GHOST PERFUMES*
+━━━━━━━━━━━━━━━━━━━━
+*Order ID:* #${orderId}
+*Date:* ${orderDate}
+
+👤 *Customer Details:*
+• *Name:* ${customerName}
+• *Phone:* ${phone}
+• *Email:* ${email}
+• *Delivery Address:* ${address}, ${city}, ${state} - ${zip}
+${orderNotes ? `• *Landmark / Note:* ${orderNotes}\n` : ''}
+🧴 *Items Ordered:*
+${itemsListText}
+💰 *Total Amount:* ₹${Number(totals.total).toLocaleString('en-IN')}
+🚚 *Delivery:* FREE Insured Delivery
+💳 *Payment Mode:* ${paymentPreference}
+
+━━━━━━━━━━━━━━━━━━━━
+Please confirm my order dispatch & payment details!`;
+
+        const encodedMsg = encodeURIComponent(waMessage);
+        const waUrl1 = `https://api.whatsapp.com/send?phone=917874848643&text=${encodedMsg}`;
+        const waUrl2 = `https://api.whatsapp.com/send?phone=917046626097&text=${encodedMsg}`;
+
+        // 4. Open WhatsApp directly in user gesture context
+        try {
+          const newTab = window.open(waUrl1, '_blank');
+          if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
+            // If popup was blocked by browser, trigger direct navigation
+            window.location.href = waUrl1;
+          }
+        } catch (_) {
+          window.location.href = waUrl1;
+        }
+
+        // 5. Clear cart
+        GhostCart.clearCart();
+        GhostApp.hideLoading();
+
+        // Render Order Confirmation screen with BOTH numbers
+        document.querySelector('main .container').innerHTML = `
+          <div style="text-align:center;padding:3.5rem 1.5rem;max-width:700px;margin:0 auto;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:var(--radius-xl);box-shadow:var(--shadow-glow);">
+            <div style="width:85px;height:85px;margin:0 auto 1.25rem;background:rgba(37,211,102,0.15);border:2px solid #25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+              <i class="fab fa-whatsapp" style="font-size:3.2rem;color:#25d366;"></i>
+            </div>
+            <span style="font-family:var(--font-display);color:var(--accent-gold);letter-spacing:0.2em;text-transform:uppercase;font-size:0.85rem;">Order Prepared for Dispatch</span>
+            <h1 style="font-size:2.4rem;margin:0.5rem 0 0.75rem;color:#fff;">Order #${orderId}</h1>
+            <p style="font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.7;">
+              Thank you, <strong>${customerName}</strong>! Your order for <strong>₹${Number(totals.total).toLocaleString('en-IN')}</strong> has been created.
+            </p>
+
+            <div style="background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.3);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:2rem;text-align:left;">
+              <p style="margin:0 0 0.5rem;font-size:0.95rem;color:#fff;font-weight:600;">
+                <i class="fab fa-whatsapp" style="color:#25d366;margin-right:0.35rem;"></i> WhatsApp has been opened with your order pre-typed!
+              </p>
+              <p style="margin:0;font-size:0.85rem;color:#cbd5e1;line-height:1.5;">
+                If your WhatsApp didn't open automatically or you wish to send the order message to both our numbers, click below:
+              </p>
+            </div>
+
+            <!-- Both WhatsApp Numbers Buttons -->
+            <div style="display:flex;flex-direction:column;gap:1rem;max-width:440px;margin:0 auto 2.5rem;">
+              <a href="${waUrl1}" target="_blank" class="btn btn--lg" style="background:#25d366;border-color:#25d366;color:#000;font-weight:700;padding:1rem;display:flex;align-items:center;justify-content:center;gap:0.75rem;">
+                <i class="fab fa-whatsapp" style="font-size:1.5rem;"></i>
+                <div style="text-align:left;">
+                  <div style="font-size:0.95rem;">Send to WhatsApp #1 (Primary)</div>
+                  <div style="font-size:0.75rem;font-weight:normal;opacity:0.85;">+91 7874848643 &bull; Tap to Send Pre-typed Order</div>
+                </div>
+              </a>
+
+              <a href="${waUrl2}" target="_blank" class="btn btn--lg btn--outline" style="border:2px solid #25d366;color:#25d366;padding:1rem;display:flex;align-items:center;justify-content:center;gap:0.75rem;background:rgba(37,211,102,0.05);">
+                <i class="fab fa-whatsapp" style="font-size:1.5rem;"></i>
+                <div style="text-align:left;">
+                  <div style="font-size:0.95rem;font-weight:700;">Send to WhatsApp #2 (Secondary)</div>
+                  <div style="font-size:0.75rem;opacity:0.85;color:var(--text-secondary);">+91 7046626097 &bull; Tap to Send Pre-typed Order</div>
+                </div>
+              </a>
+            </div>
+
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+              <a href="shop.html" class="btn btn--primary"><i class="fas fa-sparkles"></i> Continue Exploring</a>
+              <a href="index.html" class="btn btn--ghost"><i class="fas fa-home"></i> Return to Sanctuary</a>
+            </div>
+          </div>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>
