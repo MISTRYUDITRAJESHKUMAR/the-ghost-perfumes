@@ -263,8 +263,14 @@
           localStorage.setItem('ghost_orders', JSON.stringify(localOrders));
         } catch (_) {}
 
-        // 2. Non-blocking Background Firestore Sync (never halts checkout)
+        // 2. Server Store & Firestore Sync (non-blocking)
         try {
+          fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+          }).catch(() => {});
+
           if (GhostFirebase && GhostFirebase.db) {
             GhostFirebase.db.collection('orders').doc(orderId).set(orderData).catch(() => {});
           }

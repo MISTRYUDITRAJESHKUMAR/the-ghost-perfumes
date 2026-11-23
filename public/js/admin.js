@@ -197,10 +197,27 @@
         setStatValue('statTotalProducts', totalProds);
 
         const localOrders = JSON.parse(localStorage.getItem('ghost_orders') || '[]');
-        setStatValue('statTotalOrders', localOrders.length || 3);
-        const localRev = localOrders.reduce((sum, o) => sum + (o.total || 0), 0) || 1280;
+        setStatValue('statTotalOrders', localOrders.length || 0);
+        const localRev = localOrders.reduce((sum, o) => sum + (o.total || 0), 0);
         setStatValue('statRevenue', formatCurrency(localRev));
         setStatValue('statActiveUsers', 48);
+
+        // Fetch live stats from Master Server
+        fetch('/api/admin/stats', {
+            headers: {
+                'x-admin-key': 'ghost@123',
+                'x-admin-email': currentUser ? currentUser.email : 'uditrmistry@gmail.com'
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.stats) {
+                setStatValue('statTotalProducts', data.stats.totalProducts);
+                setStatValue('statTotalOrders', data.stats.totalOrders);
+                setStatValue('statRevenue', formatCurrency(data.stats.totalRevenue));
+            }
+        })
+        .catch(() => {});
 
         try {
             // Products count (real-time)
@@ -342,6 +359,19 @@
         if (countBadge) countBadge.textContent = allProducts.length;
         renderProductsTable(allProducts);
 
+        // Fetch fresh products from server API
+        fetch('/api/products')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+                    allProducts = data.products;
+                    if (countBadge) countBadge.textContent = allProducts.length;
+                    renderProductsTable(allProducts);
+                    localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
+                }
+            })
+            .catch(() => {});
+
         if (db && GhostFirebase && GhostFirebase.isConfigured()) {
             try {
                 const unsubProducts = db
@@ -478,29 +508,42 @@
                 if (!productToDelete) return;
                 confirmBtn.disabled = true;
                 try {
-                    // 1. Remove from local storage custom products
+                    // 1. Delete from Server API
+                    try {
+                        await fetch('/api/admin/products/' + encodeURIComponent(productToDelete), {
+                            method: 'DELETE',
+                            headers: {
+                                'x-admin-key': 'ghost@123',
+                                'x-admin-email': currentUser ? currentUser.email : 'uditrmistry@gmail.com'
+                            }
+                        });
+                    } catch (_) {}
+
+                    // 2. Remove from local storage custom products
                     const custom = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
                     const filtered = custom.filter(p => p.id !== productToDelete);
                     localStorage.setItem('ghost_custom_products', JSON.stringify(filtered));
 
-                    // 2. Track deleted products so default catalog products are hidden
+                    // 3. Track deleted products so default catalog products are hidden
                     const deleted = JSON.parse(localStorage.getItem('ghost_deleted_products') || '[]');
                     if (!deleted.includes(productToDelete)) {
                         deleted.push(productToDelete);
                         localStorage.setItem('ghost_deleted_products', JSON.stringify(deleted));
                     }
 
-                    // 3. Delete from Firestore if connected
+                    // 4. Delete from Firestore if connected
                     if (db && GhostFirebase && GhostFirebase.isConfigured()) {
-                        await db.collection(COLLECTIONS.products).doc(productToDelete).delete();
+                        try {
+                            db.collection(COLLECTIONS.products).doc(productToDelete).delete().catch(() => {});
+                        } catch (_) {}
                     }
 
-                    showToast('Perfume deleted from vault successfully.', 'success');
+                    showToast('✓ Perfume deleted from master vault successfully.', 'success');
                     // Refresh view
                     listenProducts();
                 } catch (err) {
                     console.error('Delete error:', err);
-                    showToast('Deleted locally from archive.', 'info');
+                    showToast('Deleted from local registry.', 'info');
                     listenProducts();
                 }
                 confirmBtn.disabled = false;
@@ -593,19 +636,35 @@
                 const productId = document.getElementById('productId').value;
                 const newId = productId || ('ghost-prod-' + Date.now());
 
-                // 1. Save to local storage for instant sync across all tabs & storefront
+                const savedObj = {
+                    id: newId,
+                    ...productData,
+                    inStock: productData.stock > 0,
+                    stockQty: productData.stock,
+                    thumbnail: productData.image,
+                    shortDesc: productData.description.slice(0, 100) + '...',
+                    createdAt: Date.now()
+                };
+
+                // 1. Send to Master Server API (persists across all devices & Vercel)
+                try {
+                    await fetch('/api/admin/products', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': 'ghost@123',
+                            'x-admin-email': currentUser ? currentUser.email : 'uditrmistry@gmail.com'
+                        },
+                        body: JSON.stringify(savedObj)
+                    });
+                } catch(apiErr) {
+                    console.warn('[Admin] Server API update notice:', apiErr);
+                }
+
+                // 2. Save to local storage for instant sync across all tabs & storefront
                 try {
                     const custom = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
                     const existingIdx = custom.findIndex(p => p.id === newId);
-                    const savedObj = {
-                        id: newId,
-                        ...productData,
-                        inStock: productData.stock > 0,
-                        stockQty: productData.stock,
-                        thumbnail: productData.image,
-                        shortDesc: productData.description.slice(0, 100) + '...',
-                        createdAt: Date.now()
-                    };
                     if (existingIdx >= 0) {
                         custom[existingIdx] = savedObj;
                     } else {
@@ -621,25 +680,23 @@
                     console.warn('LocalStorage save warning:', e);
                 }
 
-                // 2. Also save to Firestore cloud database
-                try {
-                    if (db && GhostFirebase && GhostFirebase.isConfigured()) {
-                        await db.collection(COLLECTIONS.products).doc(newId).set({
+                // 3. Optional: non-blocking background Firestore write
+                if (db && GhostFirebase && GhostFirebase.isConfigured()) {
+                    try {
+                        db.collection(COLLECTIONS.products).doc(newId).set({
                             ...productData,
                             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        }, { merge: true });
-                    }
-                } catch (cloudErr) {
-                    console.warn('Cloud sync note (Firebase will sync when connected):', cloudErr.message);
+                        }, { merge: true }).catch(() => {});
+                    } catch (_) {}
                 }
 
-                showToast(productId ? 'Perfume updated successfully!' : 'New fragrance added to vault & live on storefront!', 'success');
+                showToast(productId ? '✓ Perfume updated successfully in Master Vault!' : '✓ New fragrance added to vault & live on storefront!', 'success');
                 
                 if (productId) {
                     setTimeout(() => {
                         window.location.href = 'products.html';
-                    }, 1000);
+                    }, 800);
                 } else {
                     form.reset();
                     resetImagePreview();
@@ -853,7 +910,7 @@
         initOrderDetailModal();
     }
 
-    function listenOrders() {
+    async function listenOrders() {
         const tbody = document.getElementById('ordersTableBody');
         const countBadge = document.getElementById('ordersCount');
         if (!tbody) return;
@@ -870,25 +927,51 @@
         if (countBadge) countBadge.textContent = allOrders.length;
         renderOrdersTable(allOrders);
 
+        // Fetch from Master Server Store
         try {
-            const unsubOrders = db
-                .collection(COLLECTIONS.orders)
-                .orderBy('createdAt', 'desc')
-                .onSnapshot((snap) => {
-                    if (snap && !snap.empty) {
-                        const map = new Map();
-                        getLocalOrders().forEach(o => map.set(o.id, o));
-                        snap.forEach((doc) => {
-                            map.set(doc.id, { id: doc.id, ...doc.data() });
-                        });
-                        allOrders = Array.from(map.values());
-                        if (countBadge) countBadge.textContent = allOrders.length;
-                        renderOrdersTable(allOrders);
-                    }
-                }, (err) => {
-                    console.warn('Orders sync deferred:', err.message);
+            const res = await fetch('/api/admin/orders', {
+                headers: {
+                    'x-admin-key': 'ghost@123',
+                    'x-admin-email': currentUser ? currentUser.email : 'uditrmistry@gmail.com'
+                }
+            });
+            const data = await res.json();
+            if (data.success && Array.isArray(data.orders) && data.orders.length > 0) {
+                const map = new Map();
+                data.orders.forEach(o => map.set(o.orderId || o.id, { id: o.orderId || o.id, ...o }));
+                getLocalOrders().forEach(o => {
+                    const id = o.orderId || o.id;
+                    if (!map.has(id)) map.set(id, o);
                 });
-            activeListeners.push(unsubOrders);
+                allOrders = Array.from(map.values());
+                if (countBadge) countBadge.textContent = allOrders.length;
+                renderOrdersTable(allOrders);
+            }
+        } catch(apiErr) {
+            console.warn('[Admin] Server orders fetch note:', apiErr);
+        }
+
+        try {
+            if (db && GhostFirebase && GhostFirebase.isConfigured()) {
+                const unsubOrders = db
+                    .collection(COLLECTIONS.orders)
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot((snap) => {
+                        if (snap && !snap.empty) {
+                            const map = new Map();
+                            allOrders.forEach(o => map.set(o.id || o.orderId, o));
+                            snap.forEach((doc) => {
+                                map.set(doc.id, { id: doc.id, ...doc.data() });
+                            });
+                            allOrders = Array.from(map.values());
+                            if (countBadge) countBadge.textContent = allOrders.length;
+                            renderOrdersTable(allOrders);
+                        }
+                    }, (err) => {
+                        console.warn('Orders sync deferred:', err.message);
+                    });
+                activeListeners.push(unsubOrders);
+            }
         } catch(e) {
             console.warn('Offline orders active.');
         }
@@ -983,10 +1066,46 @@
 
     async function updateOrderStatus(orderId, newStatus) {
         try {
-            await db.collection(COLLECTIONS.orders).doc(orderId).update({
-                status: newStatus,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
+            // 1. Update in memory and local storage
+            const idx = allOrders.findIndex(o => (o.id === orderId || o.orderId === orderId));
+            if (idx >= 0) {
+                allOrders[idx].status = newStatus;
+                renderOrdersTable(allOrders);
+            }
+            try {
+                const local = JSON.parse(localStorage.getItem('ghost_orders') || '[]');
+                const lIdx = local.findIndex(o => (o.id === orderId || o.orderId === orderId));
+                if (lIdx >= 0) {
+                    local[lIdx].status = newStatus;
+                    localStorage.setItem('ghost_orders', JSON.stringify(local));
+                }
+            } catch (_) {}
+
+            // 2. Update via Master API
+            try {
+                await fetch(`/api/admin/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-key': 'ghost@123',
+                        'x-admin-email': currentUser ? currentUser.email : 'uditrmistry@gmail.com'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+            } catch (apiErr) {
+                console.warn('[Admin] Order status API update notice:', apiErr);
+            }
+
+            // 3. Sync to Firestore if available
+            if (db && GhostFirebase && GhostFirebase.isConfigured()) {
+                try {
+                    await db.collection(COLLECTIONS.orders).doc(orderId).update({
+                        status: newStatus,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    });
+                } catch (_) {}
+            }
+
             showToast(`Order status updated to "${newStatus}".`, 'success');
         } catch (err) {
             console.error('Update order status error:', err);

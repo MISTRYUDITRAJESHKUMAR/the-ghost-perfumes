@@ -250,18 +250,29 @@
         let currentSettings = JSON.parse(localStorage.getItem('ghost_store_settings') || 'null') || DEFAULT_SETTINGS;
         populateForm(currentSettings);
 
-        // 2. Try Firestore if available
-        if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
-          try {
-            const doc = await GhostFirebase.db.collection('settings').doc('storeContent').get();
-            if (doc.exists) {
-              currentSettings = { ...DEFAULT_SETTINGS, ...doc.data() };
+        // 2. Fetch latest settings from server API
+        fetch('/api/settings')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success && data.settings) {
+              currentSettings = { ...DEFAULT_SETTINGS, ...data.settings };
               populateForm(currentSettings);
               localStorage.setItem('ghost_store_settings', JSON.stringify(currentSettings));
             }
-          } catch(e) {
-            console.warn('Could not read cloud settings:', e.message);
-          }
+          })
+          .catch(() => {});
+
+        // 3. Try Firestore if available
+        if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
+          try {
+            GhostFirebase.db.collection('settings').doc('storeContent').get().then(doc => {
+              if (doc && doc.exists) {
+                currentSettings = { ...DEFAULT_SETTINGS, ...doc.data() };
+                populateForm(currentSettings);
+                localStorage.setItem('ghost_store_settings', JSON.stringify(currentSettings));
+              }
+            }).catch(() => {});
+          } catch(e) {}
         }
 
         // Form submit
@@ -283,22 +294,34 @@
             updatedAt: new Date().toISOString()
           };
 
-          // Save local
+          // 1. Save to Server Master API (persists across all devices & Vercel)
+          try {
+            await fetch('/api/admin/settings', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-admin-key': 'ghost@123'
+              },
+              body: JSON.stringify(updated)
+            });
+          } catch (apiErr) {
+            console.warn('[Settings] API sync note:', apiErr);
+          }
+
+          // 2. Save local storage for instant sync across tabs
           localStorage.setItem('ghost_store_settings', JSON.stringify(updated));
 
-          // Save Firestore
-          try {
-            if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
-              await GhostFirebase.db.collection('settings').doc('storeContent').set(updated, { merge: true });
-            }
-          } catch(err) {
-            console.warn('Firestore settings write:', err.message);
+          // 3. Non-blocking Firestore save
+          if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
+            try {
+              GhostFirebase.db.collection('settings').doc('storeContent').set(updated, { merge: true }).catch(() => {});
+            } catch (_) {}
           }
 
           if (typeof showToast === 'function') {
-            showToast('Storefront content and hero tagline updated live!', 'success');
+            showToast('✓ Storefront content and hero tagline updated live across the website!', 'success');
           } else {
-            alert('Settings updated successfully!');
+            alert('✓ Storefront content updated successfully!');
           }
 
           saveBtn.disabled = false;

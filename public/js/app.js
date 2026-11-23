@@ -499,7 +499,20 @@ const GhostApp = (function () {
       _renderSettingsDOM(settings);
     }
 
-    // 2. Cloud sync if Firebase is connected
+    // 2. Fetch master settings from server API (always in sync with Admin Panel)
+    try {
+      const resp = await fetch('/api/settings');
+      if (resp.ok) {
+        const json = await resp.json();
+        if (json.success && json.settings) {
+          settings = { ...(settings || {}), ...json.settings };
+          localStorage.setItem('ghost_store_settings', JSON.stringify(settings));
+          _renderSettingsDOM(settings);
+        }
+      }
+    } catch (_) {}
+
+    // 3. Cloud sync if Firebase is connected
     if (typeof GhostFirebase !== 'undefined' && GhostFirebase.isConfigured() && GhostFirebase.db) {
       try {
         const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 1500));

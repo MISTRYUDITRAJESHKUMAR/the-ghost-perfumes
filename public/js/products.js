@@ -289,50 +289,64 @@ const GhostProducts = (function () {
     const local = _getLocalProducts();
     _cache = local;
 
-    if (!GhostFirebase || !GhostFirebase.isConfigured() || !GhostFirebase.db) {
-      return _cache;
+    // 1. Try master REST API from server (always in sync across all devices & Vercel)
+    try {
+      const resp = await fetch('/api/products');
+      if (resp.ok) {
+        const json = await resp.json();
+        if (json.success && Array.isArray(json.products) && json.products.length > 0) {
+          _cache = json.products;
+          try {
+            // Save server products to local storage for offline use
+            localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
+          } catch (_) {}
+          return _cache;
+        }
+      }
+    } catch (_) {}
+
+    // 2. Try Firestore if configured
+    if (GhostFirebase && GhostFirebase.isConfigured() && GhostFirebase.db) {
+      try {
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
+        const snap = await Promise.race([
+          GhostFirebase.db.collection('products').orderBy('createdAt', 'desc').get(),
+          timeoutPromise
+        ]);
+        if (snap && !snap.empty) {
+          const cloud = snap.docs.map(_docToProduct);
+          const map = new Map();
+          local.forEach(p => map.set(p.id, p));
+          cloud.forEach(p => map.set(p.id, p));
+          _cache = Array.from(map.values());
+          return _cache;
+        }
+      } catch (_) {}
     }
 
-    try {
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
-      const snap = await Promise.race([
-        GhostFirebase.db.collection('products').orderBy('createdAt', 'desc').get(),
-        timeoutPromise
-      ]);
-      if (snap && !snap.empty) {
-        const cloud = snap.docs.map(_docToProduct);
-        const map = new Map();
-        local.forEach(p => map.set(p.id, p));
-        cloud.forEach(p => map.set(p.id, p));
-        _cache = Array.from(map.values());
-        return _cache;
-      }
-    } catch (err) {
-      // Offline fallback is already in _cache
-    }
     return _cache;
   }
 
   async function fetchById(id) {
+    if (!id) return _cache[0] || null;
+
+    // 1. Check current memory cache or local storage
     const local = _getLocalProducts();
-    if (id) {
-      const localFound = local.find(p => p.id === id);
-      if (localFound) return localFound;
-    }
+    const localFound = local.find(p => p.id === id);
 
-    if (GhostFirebase && GhostFirebase.isConfigured() && GhostFirebase.db && id) {
-      try {
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
-        const doc = await Promise.race([
-          GhostFirebase.db.collection('products').doc(id).get(),
-          timeoutPromise
-        ]);
-        if (doc && doc.exists) return _docToProduct(doc);
-      } catch (_) {}
-    }
+    // 2. Try server API
+    try {
+      const resp = await fetch('/api/products/' + encodeURIComponent(id));
+      if (resp.ok) {
+        const json = await resp.json();
+        if (json.success && json.product) return json.product;
+      }
+    } catch (_) {}
 
-    // Default to first product if specific id not found
-    return (id ? local.find(p => p.id === id) : null) || local[0] || null;
+    if (localFound) return localFound;
+
+    // 3. Fallback to first available
+    return (fetchAll().then(list => list.find(p => p.id === id) || list[0] || null));
   }
 
   async function fetchFeatured(limit = 8) {
