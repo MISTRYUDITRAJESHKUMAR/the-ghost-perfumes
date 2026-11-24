@@ -195,29 +195,52 @@
                         </section>
                     </div>
 
-                    <!-- Right Column — Image -->
+                    <!-- Right Column — Images & Gallery -->
                     <div class="form-column form-column--aside">
                         <section class="admin-card">
-                            <div class="admin-card__header">
+                            <div class="admin-card__header" style="display:flex;justify-content:space-between;align-items:center;">
                                 <h2 class="admin-card__title">
-                                    <i class="fas fa-image"></i> Product Image
+                                    <i class="fas fa-images"></i> Product Gallery (<span id="galleryCountBadge">0</span>)
                                 </h2>
+                                <span class="badge" style="font-size:0.75rem;background:rgba(212,175,55,0.15);color:var(--admin-primary);border:1px solid rgba(212,175,55,0.3);padding:0.2rem 0.5rem;border-radius:4px;">Multi-Image</span>
                             </div>
                             <div class="admin-card__body">
+                                <!-- Primary Image URL -->
                                 <div class="form-group">
-                                    <label for="productImage" class="form-label">Image URL <span class="required">*</span></label>
+                                    <label for="productImage" class="form-label">Primary Cover Image URL <span class="required">*</span></label>
                                     <input type="text" id="productImage" class="form-input" placeholder="https://images.unsplash.com/... or upload below" required>
                                     <span class="form-error" id="imageError"></span>
                                 </div>
+
+                                <!-- Device Upload: Multi-file support -->
                                 <div class="form-group" style="margin-top: 1rem;">
-                                    <label class="form-label">Or Upload Device Image</label>
-                                    <input type="file" id="productImageFile" accept="image/*" class="form-input" style="padding: 0.5rem; cursor: pointer;">
-                                    <span class="form-hint">Upload JPEG, PNG or WebP flacon photo from device</span>
+                                    <label class="form-label"><i class="fas fa-upload"></i> Upload Photos From Device</label>
+                                    <input type="file" id="productImageFile" accept="image/*" multiple class="form-input" style="padding: 0.5rem; cursor: pointer;">
+                                    <span class="form-hint">Tip: Select 1 or multiple photos from phone / PC</span>
                                 </div>
-                                <div class="image-preview-container" style="margin-top: 1.25rem;">
-                                    <div class="image-preview" id="imagePreview">
-                                        <i class="fas fa-image"></i>
-                                        <p>Image preview will appear here</p>
+
+                                <!-- Additional Gallery Image URLs -->
+                                <div class="form-group" style="margin-top: 1.25rem;">
+                                    <label class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
+                                        <span><i class="fas fa-link"></i> Additional Image URLs</span>
+                                        <button type="button" id="addMoreUrlBtn" class="btn-admin btn-admin--sm btn-admin--outline" style="font-size:0.75rem;padding:0.25rem 0.6rem;">
+                                            <i class="fas fa-plus"></i> Add URL
+                                        </button>
+                                    </label>
+                                    <div id="additionalUrlsContainer" style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.4rem;"></div>
+                                </div>
+
+                                <!-- Hidden container to maintain compatibility with legacy code -->
+                                <div id="imagePreview" style="display:none;"></div>
+
+                                <!-- Live Interactive Gallery Grid -->
+                                <div style="margin-top: 1.5rem;">
+                                    <label class="form-label">Gallery Preview &amp; Order</label>
+                                    <div class="gallery-preview-grid" id="galleryPreviewGrid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(80px, 1fr));gap:0.75rem;margin-top:0.5rem;min-height:90px;background:var(--admin-bg-tertiary);padding:0.75rem;border-radius:var(--admin-radius-md);border:1px dashed var(--admin-border);">
+                                        <div style="grid-column:1/-1;text-align:center;color:var(--admin-text-dim);padding:1rem 0;" id="emptyGalleryNotice">
+                                            <i class="fas fa-images" style="font-size:1.8rem;margin-bottom:0.4rem;display:block;"></i>
+                                            <span>No photos added yet. Add URLs or upload photos above.</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

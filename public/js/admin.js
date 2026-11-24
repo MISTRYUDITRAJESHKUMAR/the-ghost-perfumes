@@ -582,51 +582,150 @@
         checkForEditMode();
     }
 
+    let productGalleryImages = [];
+
+    function renderAdminGallery() {
+        const grid = document.getElementById('galleryPreviewGrid');
+        const badge = document.getElementById('galleryCountBadge');
+        const primaryInput = document.getElementById('productImage');
+        if (!grid) return;
+
+        // Sync primary cover input with first image if present
+        if (productGalleryImages.length > 0 && primaryInput) {
+            primaryInput.value = productGalleryImages[0];
+        }
+
+        if (badge) badge.textContent = productGalleryImages.length;
+
+        if (productGalleryImages.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;color:var(--admin-text-dim);padding:1rem 0;" id="emptyGalleryNotice">
+                    <i class="fas fa-images" style="font-size:1.8rem;margin-bottom:0.4rem;display:block;"></i>
+                    <span>No photos added yet. Add URLs or upload photos above.</span>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = productGalleryImages.map((url, idx) => `
+            <div class="gallery-thumb-item ${idx === 0 ? 'is-cover' : ''}">
+                <img src="${escapeHTML(url)}" alt="Photo ${idx + 1}" onerror="this.src='https://via.placeholder.com/80x80/1a1a24/d4af37?text=Error'">
+                ${idx === 0 ? '<span class="gallery-thumb-badge">Cover</span>' : ''}
+                <button type="button" class="gallery-thumb-remove" onclick="AdminApp.removeGalleryImage(${idx})" title="Remove photo">&times;</button>
+                ${idx !== 0 ? `<button type="button" class="gallery-thumb-set-cover" onclick="AdminApp.setPrimaryImage(${idx})" title="Set as primary cover">Make Cover</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function removeGalleryImage(index) {
+        if (index >= 0 && index < productGalleryImages.length) {
+            productGalleryImages.splice(index, 1);
+            const primaryInput = document.getElementById('productImage');
+            if (primaryInput) {
+                primaryInput.value = productGalleryImages.length > 0 ? productGalleryImages[0] : '';
+            }
+            renderAdminGallery();
+        }
+    }
+
+    function setPrimaryImage(index) {
+        if (index > 0 && index < productGalleryImages.length) {
+            const [selected] = productGalleryImages.splice(index, 1);
+            productGalleryImages.unshift(selected);
+            renderAdminGallery();
+        }
+    }
+
+    function syncUrlsToGallery() {
+        const primary = document.getElementById('productImage')?.value.trim();
+        const inputs = document.querySelectorAll('.additional-img-url');
+        const newUrls = [];
+        if (primary) newUrls.push(primary);
+        inputs.forEach(i => {
+            const v = i.value.trim();
+            if (v && !newUrls.includes(v)) newUrls.push(v);
+        });
+        // Keep any device data URLs that were uploaded
+        productGalleryImages.forEach(img => {
+            if (img.startsWith('data:') && !newUrls.includes(img)) {
+                newUrls.push(img);
+            }
+        });
+        productGalleryImages = newUrls;
+        renderAdminGallery();
+    }
+
     function initImagePreview() {
         const input = document.getElementById('productImage');
-        const preview = document.getElementById('imagePreview');
         const fileInput = document.getElementById('productImageFile');
-        if (!input || !preview) return;
+        const addBtn = document.getElementById('addMoreUrlBtn');
+        const container = document.getElementById('additionalUrlsContainer');
 
-        // Device Image Upload (FileReader -> Data URL)
+        if (input) {
+            input.addEventListener('input', debounce(() => {
+                const url = input.value.trim();
+                if (url) {
+                    if (productGalleryImages.length === 0) {
+                        productGalleryImages.push(url);
+                    } else {
+                        productGalleryImages[0] = url;
+                    }
+                } else if (productGalleryImages.length > 0) {
+                    productGalleryImages.shift();
+                }
+                renderAdminGallery();
+            }, 300));
+        }
+
+        // Multi-file upload from device
         if (fileInput) {
             fileInput.addEventListener('change', (e) => {
-                const file = e.target.files && e.target.files[0];
-                if (!file) return;
-                if (!file.type.startsWith('image/')) {
-                    showToast('Please select a valid image file (PNG, JPG, WebP).', 'warning');
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const dataUrl = event.target.result;
-                    input.value = dataUrl;
-                    preview.innerHTML = `<img src="${dataUrl}" alt="Flacon Preview">`;
-                    preview.classList.add('has-image');
-                    showToast('Device image loaded successfully!', 'info');
-                };
-                reader.readAsDataURL(file);
+                const files = Array.from(e.target.files || []);
+                if (!files.length) return;
+                let loaded = 0;
+                files.forEach((file) => {
+                    if (!file.type.startsWith('image/')) return;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const dataUrl = event.target.result;
+                        if (!productGalleryImages.includes(dataUrl)) {
+                            productGalleryImages.push(dataUrl);
+                        }
+                        loaded++;
+                        if (loaded === files.length) {
+                            renderAdminGallery();
+                            showToast(`✓ ${files.length} photo(s) added to gallery!`, 'success');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
             });
         }
 
-        input.addEventListener('input', debounce(() => {
-            const url = input.value.trim();
-            if (url) {
-                const img = new Image();
-                img.onload = () => {
-                    preview.innerHTML = `<img src="${url}" alt="Product Preview">`;
-                    preview.classList.add('has-image');
-                };
-                img.onerror = () => {
-                    preview.innerHTML = `<i class="fas fa-exclamation-triangle"></i><p>Invalid image URL</p>`;
-                    preview.classList.remove('has-image');
-                };
-                img.src = url;
-            } else {
-                preview.innerHTML = `<i class="fas fa-image"></i><p>Image preview will appear here</p>`;
-                preview.classList.remove('has-image');
-            }
-        }, 300));
+        // Add additional URL row button
+        if (addBtn && container) {
+            addBtn.addEventListener('click', () => {
+                const row = document.createElement('div');
+                row.className = 'gallery-url-row';
+                row.innerHTML = `
+                    <input type="text" class="form-input form-input--sm additional-img-url" placeholder="https://..." style="padding:0.4rem 0.6rem;font-size:0.85rem;flex-grow:1;">
+                    <button type="button" class="btn-admin btn-admin--danger btn-admin--sm" style="padding:0.35rem 0.6rem;" title="Remove">&times;</button>
+                `;
+                const inp = row.querySelector('input');
+                const del = row.querySelector('button');
+
+                inp.addEventListener('input', debounce(() => {
+                    syncUrlsToGallery();
+                }, 300));
+
+                del.addEventListener('click', () => {
+                    row.remove();
+                    syncUrlsToGallery();
+                });
+
+                container.appendChild(row);
+                inp.focus();
+            });
+        }
     }
 
     function initProductForm() {
@@ -876,6 +975,35 @@
             document.getElementById('productCategory').value = data.category || '';
             document.getElementById('productFeatured').checked = data.featured || false;
             document.getElementById('productImage').value = data.image || data.imageUrl || data.thumbnail || '';
+
+            // Populate multi-image gallery
+            const imagesList = Array.isArray(data.images) && data.images.length > 0
+                ? data.images
+                : [data.image || data.imageUrl || data.thumbnail].filter(Boolean);
+
+            productGalleryImages = [...imagesList];
+            if (imagesList[0]) {
+                document.getElementById('productImage').value = imagesList[0];
+            }
+
+            const additionalContainer = document.getElementById('additionalUrlsContainer');
+            if (additionalContainer) {
+                additionalContainer.innerHTML = '';
+                for (let i = 1; i < imagesList.length; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'gallery-url-row';
+                    row.innerHTML = `
+                        <input type="text" class="form-input form-input--sm additional-img-url" value="${escapeHTML(imagesList[i])}" style="padding:0.4rem 0.6rem;font-size:0.85rem;flex-grow:1;">
+                        <button type="button" class="btn-admin btn-admin--danger btn-admin--sm" style="padding:0.35rem 0.6rem;" title="Remove">&times;</button>
+                    `;
+                    const inp = row.querySelector('input');
+                    const del = row.querySelector('button');
+                    inp.addEventListener('input', debounce(() => syncUrlsToGallery(), 300));
+                    del.addEventListener('click', () => { row.remove(); syncUrlsToGallery(); });
+                    additionalContainer.appendChild(row);
+                }
+            }
+            renderAdminGallery();
 
             // Sizes
             const sizeSelect = document.getElementById('productSize');

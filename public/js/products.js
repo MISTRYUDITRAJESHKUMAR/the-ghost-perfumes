@@ -15,221 +15,374 @@ const GhostProducts = (function () {
 
   const _defaultCatalog = [
     {
-      id: 'ghost-01',
-      name: 'Phantom Veil',
-      price: 2499,
-      salePrice: null,
-      category: 'unisex',
-      tags: ['ethereal', 'iris', 'amber', 'unisex'],
-      thumbnail: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80',
-        'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'A whisper of cold white iris wrapped in midnight violet and celestial amber. Distilled under a moonless sky, Phantom Veil leaves a lingering aura that feels suspended between memory and dream.',
-      shortDesc: 'Cold white iris, violet smoke & celestial white amber.',
-      featured: true,
-      inStock: true,
-      stockQty: 14,
-      sizes: [
-        { label: 'Travel Flacon', ml: 50, price: 1499 },
-        { label: 'Sanctuary Flacon', ml: 100, price: 2499 },
-        { label: 'Grand Reserve', ml: 200, price: 3999 }
-      ],
-      notes: {
-        top: ['White Bergamot', 'Cold Iris Dew', 'Aldehydic Mist'],
-        middle: ['Midnight Violet', 'Spectral Incense', 'Silver Peony'],
-        base: ['White Amber', 'Cashmere Musk', 'Ethereal Vetiver']
-      },
-      createdAt: Date.now() - 1000000
+        "category": "men",
+        "createdAt": 1731900000000,
+        "description": "Carved from the darkest shadows of ancient Siberian forests. Smoked birch wood and aged black cardamom colliding with raw Himalayan oud and bourbon-soaked oak barrels.",
+        "featured": true,
+        "id": "ghost-02",
+        "image": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Obsidian Haunt",
+        "notes": {
+            "base": [
+                "Charred Oak",
+                "Java Vetiver",
+                "Black Ambergris"
+            ],
+            "middle": [
+                "Dark Saddle Leather",
+                "Wild Himalayan Oud",
+                "Castoreum Resin"
+            ],
+            "top": [
+                "Smoked Birch",
+                "Black Cardamom",
+                "Burnt Orange Peel"
+            ]
+        },
+        "price": 2999,
+        "shortDesc": "Smoked birch, Himalayan oud, leather & charred oak.",
+        "sizes": [
+            {
+                "label": "Standard Flacon",
+                "ml": "100ml",
+                "price": 2999
+            },
+            {
+                "label": "Grand Reserve",
+                "ml": "250ml",
+                "price": 4999
+            }
+        ],
+        "stock": 8,
+        "stockQty": 8,
+        "tags": [
+            "dark",
+            "smoky",
+            "leather",
+            "men"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80"
     },
     {
-      id: 'ghost-02',
-      name: 'Obsidian Haunt',
-      price: 2999,
-      salePrice: null,
-      category: 'men',
-      tags: ['dark', 'smoky', 'leather', 'men'],
-      thumbnail: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80',
-        'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'Carved from the darkest shadows of ancient Siberian forests. Smoked birch wood and aged black cardamom colliding with raw Himalayan oud and bourbon-soaked oak barrels.',
-      shortDesc: 'Smoked birch, Himalayan oud, leather & charred oak.',
-      featured: true,
-      inStock: true,
-      stockQty: 8,
-      sizes: [
-        { label: 'Standard Flacon', ml: 100, price: 2999 },
-        { label: 'Grand Reserve', ml: 250, price: 4999 }
-      ],
-      notes: {
-        top: ['Smoked Birch', 'Black Cardamom', 'Burnt Orange Peel'],
-        middle: ['Dark Saddle Leather', 'Wild Himalayan Oud', 'Castoreum Resin'],
-        base: ['Charred Oak', 'Java Vetiver', 'Black Ambergris']
-      },
-      createdAt: Date.now() - 2000000
+        "category": "women",
+        "createdAt": 1731800000000,
+        "description": "A crimson blood rose blooming in a frozen gothic garden. Enriched with rare blackcurrant nectar, nocturnal damask petals, and a base of pure Bourbon vanilla pods.",
+        "featured": true,
+        "id": "ghost-03",
+        "image": "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Spectral Rose",
+        "notes": {
+            "base": [
+                "Bourbon Vanilla Pod",
+                "Sandalwood Cream",
+                "Dark Amber"
+            ],
+            "middle": [
+                "Nocturnal Damask Rose",
+                "Crimson Peony",
+                "Geranium Absolute"
+            ],
+            "top": [
+                "Blackcurrant Buds",
+                "Frozen Pink Peppercorn",
+                "Lychee Mist"
+            ]
+        },
+        "price": 2599,
+        "salePrice": 2199,
+        "shortDesc": "Frozen crimson rose, blackcurrant nectar & dark vanilla.",
+        "sizes": [
+            {
+                "label": "Travel Flacon",
+                "ml": "50ml",
+                "price": 1699
+            },
+            {
+                "label": "Sanctuary Flacon",
+                "ml": "100ml",
+                "price": 2599
+            }
+        ],
+        "stock": 18,
+        "stockQty": 18,
+        "tags": [
+            "rose",
+            "floral",
+            "dark-rose",
+            "women"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80"
     },
     {
-      id: 'ghost-03',
-      name: 'Spectral Rose',
-      price: 2599,
-      salePrice: 2199,
-      category: 'women',
-      tags: ['rose', 'floral', 'dark-rose', 'women'],
-      thumbnail: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'A crimson blood rose blooming in a frozen gothic garden. Enriched with rare blackcurrant nectar, nocturnal damask petals, and a base of pure Bourbon vanilla pods.',
-      shortDesc: 'Frozen crimson rose, blackcurrant nectar & dark vanilla.',
-      featured: true,
-      inStock: true,
-      stockQty: 18,
-      sizes: [
-        { label: 'Sanctuary Flacon', ml: 100, price: 2199 },
-        { label: 'Grand Reserve', ml: 150, price: 3199 }
-      ],
-      notes: {
-        top: ['Blood Mandarin', 'Frozen Morning Dew', 'Pink Peppercorn'],
-        middle: ['Damask Rose Absolute', 'Cassis Nectar', 'Night Jasmine'],
-        base: ['Bourbon Vanilla', 'Mysore Sandalwood', 'White Patchouli']
-      },
-      createdAt: Date.now() - 3000000
+        "category": "women",
+        "createdAt": 1731700000000,
+        "description": "Not the sweet confection of mortal dreams, but a smoky, resinous Madagascar vanilla bean scorched over ceremonial birch charcoal.",
+        "featured": false,
+        "id": "ghost-04",
+        "image": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Ether Vanilla",
+        "notes": {
+            "base": [
+                "Madagascar Vanilla Absolute",
+                "Benzoin Tears",
+                "White Cedar"
+            ],
+            "middle": [
+                "Smoked Vanilla Orchid",
+                "Heliotrope",
+                "Tonka Bean"
+            ],
+            "top": [
+                "Almond Blossom",
+                "Candied Nutmeg",
+                "Golden Rum"
+            ]
+        },
+        "price": 2799,
+        "shortDesc": "Scorched Madagascar vanilla bean, benzoin & tonka resin.",
+        "sizes": [
+            {
+                "label": "Sanctuary Flacon",
+                "ml": "100ml",
+                "price": 2799
+            }
+        ],
+        "stock": 20,
+        "stockQty": 20,
+        "tags": [
+            "women",
+            "vanilla",
+            "gourmand"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80"
     },
     {
-      id: 'ghost-04',
-      name: 'Ethereal Oud',
-      price: 3499,
-      salePrice: null,
-      category: 'unisex',
-      tags: ['oud', 'pure', 'luxury', 'unisex'],
-      thumbnail: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'The magnum opus of our private distillery. Aged 40-year wild Cambodian agarwood extract, purified through liquid crystal condensation and balanced with golden saffron.',
-      shortDesc: 'Aged 40-year wild Cambodian agarwood & golden saffron.',
-      featured: true,
-      inStock: true,
-      stockQty: 6,
-      sizes: [
-        { label: 'Sanctuary Flacon', ml: 100, price: 3499 },
-        { label: 'Private Vault', ml: 200, price: 5499 }
-      ],
-      notes: {
-        top: ['Kashmiri Saffron', 'Nutmeg Flower', 'Bergamot Zest'],
-        middle: ['Royal Cambodian Oud', 'Taif Rose Petals', 'Myrrh Resin'],
-        base: ['Grey Ambergris', 'Smoked Cedarwood', 'Tonka Bean']
-      },
-      createdAt: Date.now() - 4000000
+        "category": "men",
+        "createdAt": 1731600000000,
+        "description": "An apparition of dark tobacco leaf, crushed clove, and roasted coffee enveloped in the cool mist of Himalayan juniper.",
+        "featured": false,
+        "id": "ghost-05",
+        "image": "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Night Wraith",
+        "notes": {
+            "base": [
+                "Roasted Coffee Bean",
+                "Indonesian Patchouli",
+                "Oakwood"
+            ],
+            "middle": [
+                "Cured Tobacco Leaf",
+                "Crushed Clove",
+                "Black Tea"
+            ],
+            "top": [
+                "Alpine Juniper",
+                "Pink Pepper",
+                "Cold Aldehydes"
+            ]
+        },
+        "price": 2699,
+        "shortDesc": "Dark cured tobacco leaf, spiced clove & cool juniper.",
+        "sizes": [
+            {
+                "label": "Sanctuary Flacon",
+                "ml": "100ml",
+                "price": 2699
+            }
+        ],
+        "stock": 22,
+        "stockQty": 22,
+        "tags": [
+            "men",
+            "spice",
+            "tobacco"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80"
     },
     {
-      id: 'ghost-05',
-      name: 'Night Wraith',
-      price: 2699,
-      salePrice: null,
-      category: 'men',
-      tags: ['men', 'spice', 'tobacco'],
-      thumbnail: 'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'An apparition of dark tobacco leaf, crushed clove, and roasted coffee enveloped in the cool mist of Himalayan juniper.',
-      shortDesc: 'Dark cured tobacco leaf, spiced clove & cool juniper.',
-      featured: false,
-      inStock: true,
-      stockQty: 22,
-      sizes: [
-        { label: 'Sanctuary Flacon', ml: 100, price: 2699 }
-      ],
-      notes: {
-        top: ['Alpine Juniper', 'Pink Pepper', 'Cold Aldehydes'],
-        middle: ['Cured Tobacco Leaf', 'Crushed Clove', 'Black Tea'],
-        base: ['Roasted Coffee Bean', 'Indonesian Patchouli', 'Oakwood']
-      },
-      createdAt: Date.now() - 5000000
+        "category": "women",
+        "createdAt": 1731500000000,
+        "description": "Luminous moonlight bottled as fragrance. Night-blooming jasmine, creamy white peach, and silken magnolia layered over white cedarwood.",
+        "featured": true,
+        "id": "ghost-06",
+        "image": "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Lunar Mirage",
+        "notes": {
+            "base": [
+                "White Cedarwood",
+                "Soft Amber",
+                "Tonka Bean"
+            ],
+            "middle": [
+                "Nocturnal Jasmine",
+                "White Magnolia",
+                "Freesia"
+            ],
+            "top": [
+                "White Peach Flesh",
+                "Star Anise",
+                "Green Mandarin"
+            ]
+        },
+        "price": 2399,
+        "shortDesc": "Night-blooming jasmine, white peach & silken magnolia.",
+        "sizes": [
+            {
+                "label": "Sanctuary Flacon",
+                "ml": "100ml",
+                "price": 2399
+            }
+        ],
+        "stock": 15,
+        "stockQty": 15,
+        "tags": [
+            "women",
+            "jasmine",
+            "ethereal"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80"
     },
     {
-      id: 'ghost-06',
-      name: 'Lunar Mirage',
-      price: 2399,
-      salePrice: null,
-      category: 'women',
-      tags: ['women', 'jasmine', 'ethereal'],
-      thumbnail: 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'Luminous moonlight bottled as fragrance. Night-blooming jasmine, creamy white peach, and silken magnolia layered over white cedarwood.',
-      shortDesc: 'Night-blooming jasmine, white peach & silken magnolia.',
-      featured: true,
-      inStock: true,
-      stockQty: 15,
-      sizes: [
-        { label: 'Sanctuary Flacon', ml: 100, price: 2399 }
-      ],
-      notes: {
-        top: ['White Peach Flesh', 'Star Anise', 'Green Mandarin'],
-        middle: ['Nocturnal Jasmine', 'White Magnolia', 'Freesia'],
-        base: ['White Cedarwood', 'Soft Amber', 'Tonka Bean']
-      },
-      createdAt: Date.now() - 6000000
+        "category": "unisex",
+        "createdAt": 1731400000000,
+        "description": "A radiant golden nebula of amber resin, candied cinnamon bark, and labdanum warmth that glows intimately upon the pulse points.",
+        "featured": false,
+        "id": "ghost-07",
+        "image": "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Astral Amber",
+        "notes": {
+            "base": [
+                "Siam Benzoin",
+                "Labdanum",
+                "Dark Vanilla"
+            ],
+            "middle": [
+                "Baltic Amber",
+                "Ceylon Cinnamon",
+                "Immortelle"
+            ],
+            "top": [
+                "Calabrian Mandarin",
+                "Clary Sage",
+                "Coriander"
+            ]
+        },
+        "price": 2899,
+        "shortDesc": "Warm amber nebula, candied cinnamon & sacred labdanum.",
+        "sizes": [
+            {
+                "label": "Sanctuary Flacon",
+                "ml": "100ml",
+                "price": 2899
+            }
+        ],
+        "stock": 11,
+        "stockQty": 11,
+        "tags": [
+            "amber",
+            "unisex",
+            "warm"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80"
     },
     {
-      id: 'ghost-07',
-      name: 'Astral Amber',
-      price: 2899,
-      salePrice: null,
-      category: 'unisex',
-      tags: ['amber', 'unisex', 'warm'],
-      thumbnail: 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'A radiant golden nebula of amber resin, candied cinnamon bark, and labdanum warmth that glows intimately upon the pulse points.',
-      shortDesc: 'Warm amber nebula, candied cinnamon & sacred labdanum.',
-      featured: false,
-      inStock: true,
-      stockQty: 11,
-      sizes: [
-        { label: 'Sanctuary Flacon', ml: 100, price: 2899 }
-      ],
-      notes: {
-        top: ['Calabrian Mandarin', 'Clary Sage', 'Coriander'],
-        middle: ['Baltic Amber', 'Ceylon Cinnamon', 'Immortelle'],
-        base: ['Siam Benzoin', 'Labdanum', 'Dark Vanilla']
-      },
-      createdAt: Date.now() - 7000000
-    },
-    {
-      id: 'ghost-08',
-      name: 'Silent Revenant',
-      price: 3299,
-      salePrice: null,
-      category: 'unisex',
-      tags: ['rare', 'ambergris', 'unisex'],
-      thumbnail: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
-      images: [
-        'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80'
-      ],
-      description: 'Raw oceanic storm mist crashing upon petrified coastal driftwood. Infused with floating grey ambergris harvested ethically from Atlantic shores.',
-      shortDesc: 'Oceanic salt mist, Atlantic grey ambergris & driftwood.',
-      featured: true,
-      inStock: true,
-      stockQty: 5,
-      sizes: [
-        { label: 'Sanctuary Flacon', ml: 100, price: 3299 }
-      ],
-      notes: {
-        top: ['Oceanic Sea Salt', 'Grey Thyme', 'Icy Ozone'],
-        middle: ['Petrified Driftwood', 'Italian Orris Butter'],
-        base: ['Natural Grey Ambergris', 'Black Oakmoss']
-      },
-      createdAt: Date.now() - 8000000
+        "category": "unisex",
+        "createdAt": 1731300000000,
+        "description": "Raw oceanic storm mist crashing upon petrified coastal driftwood. Infused with floating grey ambergris harvested ethically from Atlantic shores.",
+        "featured": true,
+        "id": "ghost-08",
+        "image": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+        "images": [
+            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+        ],
+        "inStock": true,
+        "name": "Silent Revenant",
+        "notes": {
+            "base": [
+                "Natural Grey Ambergris",
+                "Black Oakmoss"
+            ],
+            "middle": [
+                "Petrified Driftwood",
+                "Italian Orris Butter"
+            ],
+            "top": [
+                "Oceanic Sea Salt",
+                "Grey Thyme",
+                "Icy Ozone"
+            ]
+        },
+        "price": 3299,
+        "shortDesc": "Oceanic salt mist, Atlantic grey ambergris & driftwood.",
+        "sizes": [
+            {
+                "label": "Sanctuary Flacon",
+                "ml": "100ml",
+                "price": 3299
+            }
+        ],
+        "stock": 5,
+        "stockQty": 5,
+        "tags": [
+            "rare",
+            "ambergris",
+            "unisex"
+        ],
+        "thumbnail": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+        "imageUrl": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80"
     }
-  ];
+];
 
   let _cache = [];
   let _unsubscribe = null;
@@ -434,22 +587,37 @@ const GhostProducts = (function () {
       ? `<span class="product-badge sale">-${Math.round((1 - product.salePrice / product.price) * 100)}%</span>`
       : (product.featured ? '<span class="product-badge featured">Private Reserve</span>' : '');
 
-    const imgUrl = product.thumbnail || (product.images && product.images[0]) || product.image || product.imageUrl || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80';
+    const images = Array.isArray(product.images) && product.images.length > 0
+      ? product.images.filter(Boolean)
+      : [product.thumbnail || product.image || product.imageUrl || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80'];
+
+    const imgUrl = images[0];
+    const secondaryImg = images.length > 1 ? images[1] : null;
+    const imagesCount = images.length;
     const prodUrl = `product.html?id=${encodeURIComponent(product.id)}`;
 
     return `
       <div class="product-card tilt-card" data-product-id="${product.id}" onclick="if(!event.target.closest('.btn--add-cart, button, input')) window.location.href='${prodUrl}'" style="cursor: pointer;">
         <div class="product-card__inner">
           ${badge}
+          ${imagesCount > 1 ? `<span class="product-badge product-badge--images" title="${imagesCount} Photos"><i class="fas fa-images"></i> ${imagesCount}</span>` : ''}
           <div class="product-card__image-wrap">
-            <a href="${prodUrl}" class="product-card__image-link" tabindex="-1" aria-hidden="true" style="display:block;width:100%;height:100%;">
+            <a href="${prodUrl}" class="product-card__image-link" tabindex="-1" aria-hidden="true" style="display:block;width:100%;height:100%;position:relative;">
               <img
-                class="product-card__image"
+                class="product-card__image product-card__image--primary ${secondaryImg ? 'has-secondary' : ''}"
                 src="${_escHtml(imgUrl)}"
                 alt="${_escHtml(product.name)}"
                 loading="lazy"
                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80';"
               />
+              ${secondaryImg ? `
+              <img
+                class="product-card__image product-card__image--secondary"
+                src="${_escHtml(secondaryImg)}"
+                alt="${_escHtml(product.name)} (Angle)"
+                loading="lazy"
+                onerror="this.style.display='none';"
+              />` : ''}
             </a>
             <div class="product-card__overlay">
               <a href="${prodUrl}" class="btn btn--ghost btn--sm">
@@ -508,29 +676,81 @@ const GhostProducts = (function () {
       if (badge) badge.style.display = '';
     }
 
+    const images = Array.isArray(product.images) && product.images.length > 0
+      ? product.images.filter(Boolean)
+      : [product.thumbnail || product.image || product.imageUrl || ''].filter(Boolean);
+
+    let activeImageIndex = 0;
     const mainImg = document.getElementById('product-main-image');
-    const imgUrl = product.thumbnail || (product.images && product.images[0]) || product.image || product.imageUrl || '';
-    if (mainImg && imgUrl) {
-      mainImg.src = imgUrl;
-      mainImg.alt = product.name;
+    const gallery = document.getElementById('product-gallery');
+    const prevBtn = document.getElementById('gallery-prev-btn');
+    const nextBtn = document.getElementById('gallery-next-btn');
+    const counterWrap = document.getElementById('product-img-counter');
+    const curIdxEl = document.getElementById('current-img-index');
+    const totalCountEl = document.getElementById('total-img-count');
+
+    function switchImage(index) {
+      if (!images.length) return;
+      activeImageIndex = (index + images.length) % images.length;
+      if (mainImg) {
+        mainImg.style.opacity = '0.25';
+        setTimeout(() => {
+          mainImg.src = images[activeImageIndex];
+          mainImg.alt = `${product.name} (View ${activeImageIndex + 1})`;
+          mainImg.style.opacity = '1';
+        }, 120);
+      }
+      if (curIdxEl) curIdxEl.textContent = activeImageIndex + 1;
+      if (gallery) {
+        gallery.querySelectorAll('.gallery-thumb').forEach((thumb, idx) => {
+          if (idx === activeImageIndex) {
+            thumb.classList.add('active');
+            thumb.style.borderColor = 'var(--accent-gold)';
+            thumb.style.boxShadow = '0 0 12px rgba(212, 175, 55, 0.45)';
+          } else {
+            thumb.classList.remove('active');
+            thumb.style.borderColor = 'var(--border-subtle)';
+            thumb.style.boxShadow = 'none';
+          }
+        });
+      }
     }
 
-    const gallery = document.getElementById('product-gallery');
-    const images = product.images || [imgUrl];
+    if (images.length > 0) {
+      if (mainImg) {
+        mainImg.src = images[0];
+        mainImg.alt = product.name;
+      }
+      if (counterWrap && totalCountEl) {
+        counterWrap.style.display = images.length > 1 ? 'block' : 'none';
+        totalCountEl.textContent = images.length;
+        if (curIdxEl) curIdxEl.textContent = '1';
+      }
+      if (prevBtn) {
+        prevBtn.style.display = images.length > 1 ? 'flex' : 'none';
+        prevBtn.onclick = () => switchImage(activeImageIndex - 1);
+      }
+      if (nextBtn) {
+        nextBtn.style.display = images.length > 1 ? 'flex' : 'none';
+        nextBtn.onclick = () => switchImage(activeImageIndex + 1);
+      }
+    }
+
     if (gallery && images.length > 1) {
       gallery.innerHTML = images.map((url, i) => `
-        <button class="gallery-thumb ${i === 0 ? 'active' : ''}" style="width:65px;height:70px;background:#13111e;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;padding:0;" data-index="${i}">
-          <img src="${_escHtml(url)}" style="width:100%;height:100%;object-fit:cover;" />
+        <button class="gallery-thumb ${i === 0 ? 'active' : ''}" style="width:72px;height:76px;background:#13111e;border:2px solid ${i === 0 ? 'var(--accent-gold)' : 'var(--border-subtle)'};border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;padding:0;transition:all 0.25s ease;" data-index="${i}" title="View angle ${i + 1}">
+          <img src="${_escHtml(url)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80';" />
         </button>
       `).join('');
 
       gallery.addEventListener('click', (e) => {
         const btn = e.target.closest('.gallery-thumb');
         if (!btn) return;
-        gallery.querySelectorAll('.gallery-thumb').forEach(b => b.style.borderColor = 'var(--border-subtle)');
-        btn.style.borderColor = 'var(--accent-purple)';
-        if (mainImg) mainImg.src = images[parseInt(btn.dataset.index, 10)];
+        const idx = parseInt(btn.dataset.index, 10);
+        switchImage(idx);
       });
+    } else if (gallery) {
+      gallery.innerHTML = '';
     }
 
     const sizeSelect = document.getElementById('product-sizes');
@@ -557,7 +777,7 @@ const GhostProducts = (function () {
     }
   }
 
-  function renderNotesPyramid(container, notes) {
+    function renderNotesPyramid(container, notes) {
     if (!container || !notes) return;
     const top = Array.isArray(notes.top) ? notes.top : (notes.top ? [notes.top] : ['Bergamot', 'Cold Dew']);
     const mid = Array.isArray(notes.middle) ? notes.middle : (notes.middle ? [notes.middle] : ['Midnight Rose', 'Incense']);
