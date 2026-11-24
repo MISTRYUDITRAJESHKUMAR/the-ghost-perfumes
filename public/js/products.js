@@ -251,33 +251,62 @@ const GhostProducts = (function () {
     }
   }
 
+  // ── RTDB URL for direct REST fallback ──
+  const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+  function _rtdbToArray(val) {
+    if (!val) return [];
+    if (Array.isArray(val)) return val;
+    return Object.entries(val).map(([id, data]) => ({ id, ...data }));
+  }
+
   function listenAll(onUpdate) {
     _cache = _getLocalProducts();
     if (typeof onUpdate === 'function') onUpdate(_cache);
 
+    // PRIMARY: Firebase Realtime Database (works on Vercel + all devices)
     try {
-      if (GhostFirebase && GhostFirebase.db) {
-        _unsubscribe = GhostFirebase.db.collection('products')
-          .orderBy('createdAt', 'desc')
-          .onSnapshot(
-            (snap) => {
-              if (snap && !snap.empty) {
-                const firestoreProducts = snap.docs.map(_docToProduct);
-                const map = new Map();
-                _getLocalProducts().forEach(p => map.set(p.id, p));
-                firestoreProducts.forEach(p => map.set(p.id, p));
-                _cache = Array.from(map.values());
-                if (typeof onUpdate === 'function') onUpdate(_cache);
-              }
-            },
-            (err) => {
-              console.warn('[GhostProducts] Cloud sync deferred:', err.message);
+      if (GhostFirebase && GhostFirebase.rtdb) {
+        const productsRef = GhostFirebase.rtdb.ref('products');
+        productsRef.on('value', (snapshot) => {
+          const val = snapshot.val();
+          if (val) {
+            const rtdbProducts = _rtdbToArray(val);
+            if (rtdbProducts.length > 0) {
+              _cache = rtdbProducts;
+              try {
+                localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
+              } catch (_) {}
+              if (typeof onUpdate === 'function') onUpdate(_cache);
             }
-          );
+          }
+        }, (err) => {
+          console.warn('[GhostProducts] RTDB listener deferred:', err.message);
+        });
+        _unsubscribe = () => productsRef.off('value');
+        return _unsubscribe;
       }
     } catch (e) {
-      console.warn('[GhostProducts] Offline store active.');
+      console.warn('[GhostProducts] RTDB listener setup failed:', e.message);
     }
+
+    // FALLBACK: REST fetch from RTDB
+    fetch(RTDB_URL + '/products.json')
+      .then(r => r.json())
+      .then(val => {
+        if (val) {
+          const rtdbProducts = _rtdbToArray(val);
+          if (rtdbProducts.length > 0) {
+            _cache = rtdbProducts;
+            try {
+              localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
+            } catch (_) {}
+            if (typeof onUpdate === 'function') onUpdate(_cache);
+          }
+        }
+      })
+      .catch(() => {});
+
     return _unsubscribe;
   }
 
@@ -289,7 +318,25 @@ const GhostProducts = (function () {
     const local = _getLocalProducts();
     _cache = local;
 
-    // 1. Try master REST API from server (always in sync across all devices & Vercel)
+    // 1. Try RTDB REST (works on Vercel without server API)
+    try {
+      const resp = await fetch(RTDB_URL + '/products.json');
+      if (resp.ok) {
+        const val = await resp.json();
+        if (val) {
+          const rtdbProducts = _rtdbToArray(val);
+          if (rtdbProducts.length > 0) {
+            _cache = rtdbProducts;
+            try {
+              localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
+            } catch (_) {}
+            return _cache;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // 2. Try server REST API (works on localhost)
     try {
       const resp = await fetch('/api/products');
       if (resp.ok) {
@@ -297,32 +344,12 @@ const GhostProducts = (function () {
         if (json.success && Array.isArray(json.products) && json.products.length > 0) {
           _cache = json.products;
           try {
-            // Save server products to local storage for offline use
             localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
           } catch (_) {}
           return _cache;
         }
       }
     } catch (_) {}
-
-    // 2. Try Firestore if configured
-    if (GhostFirebase && GhostFirebase.isConfigured() && GhostFirebase.db) {
-      try {
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
-        const snap = await Promise.race([
-          GhostFirebase.db.collection('products').orderBy('createdAt', 'desc').get(),
-          timeoutPromise
-        ]);
-        if (snap && !snap.empty) {
-          const cloud = snap.docs.map(_docToProduct);
-          const map = new Map();
-          local.forEach(p => map.set(p.id, p));
-          cloud.forEach(p => map.set(p.id, p));
-          _cache = Array.from(map.values());
-          return _cache;
-        }
-      } catch (_) {}
-    }
 
     return _cache;
   }
@@ -334,7 +361,16 @@ const GhostProducts = (function () {
     const local = _getLocalProducts();
     const localFound = local.find(p => p.id === id);
 
-    // 2. Try server API
+    // 2. Try RTDB directly
+    try {
+      const resp = await fetch(RTDB_URL + '/products/' + encodeURIComponent(id) + '.json');
+      if (resp.ok) {
+        const val = await resp.json();
+        if (val) return { id, ...val };
+      }
+    } catch (_) {}
+
+    // 3. Try server API
     try {
       const resp = await fetch('/api/products/' + encodeURIComponent(id));
       if (resp.ok) {
@@ -345,7 +381,7 @@ const GhostProducts = (function () {
 
     if (localFound) return localFound;
 
-    // 3. Fallback to first available
+    // 4. Fallback to first available
     return (fetchAll().then(list => list.find(p => p.id === id) || list[0] || null));
   }
 

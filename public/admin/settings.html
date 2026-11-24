@@ -198,6 +198,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="../firebase-config.js"></script>
     <script src="../js/firebase-init.js"></script>
     <script src="../js/auth.js"></script>
@@ -250,7 +251,21 @@
         let currentSettings = JSON.parse(localStorage.getItem('ghost_store_settings') || 'null') || DEFAULT_SETTINGS;
         populateForm(currentSettings);
 
-        // 2. Fetch latest settings from server API
+        const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+        // 2. PRIMARY: Fetch from Firebase Realtime Database
+        fetch(RTDB_URL + '/settings.json')
+          .then(res => res.json())
+          .then(data => {
+            if (data) {
+              currentSettings = { ...DEFAULT_SETTINGS, ...data };
+              populateForm(currentSettings);
+              localStorage.setItem('ghost_store_settings', JSON.stringify(currentSettings));
+            }
+          })
+          .catch(() => {});
+
+        // 3. Fallback: Fetch from server API
         fetch('/api/settings')
           .then(res => res.json())
           .then(data => {
@@ -261,19 +276,6 @@
             }
           })
           .catch(() => {});
-
-        // 3. Try Firestore if available
-        if (typeof GhostFirebase !== 'undefined' && GhostFirebase.db) {
-          try {
-            GhostFirebase.db.collection('settings').doc('storeContent').get().then(doc => {
-              if (doc && doc.exists) {
-                currentSettings = { ...DEFAULT_SETTINGS, ...doc.data() };
-                populateForm(currentSettings);
-                localStorage.setItem('ghost_store_settings', JSON.stringify(currentSettings));
-              }
-            }).catch(() => {});
-          } catch(e) {}
-        }
 
         // Form submit
         const form = document.getElementById('storeSettingsForm');
@@ -294,7 +296,19 @@
             updatedAt: new Date().toISOString()
           };
 
-          // 1. Save to Server Master API (persists across all devices & Vercel)
+          // 1. PRIMARY: Save directly to Firebase Realtime Database
+          const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+          try {
+            await fetch(RTDB_URL + '/settings.json', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updated)
+            });
+          } catch(rtdbErr) {
+            console.warn('[Settings] RTDB save note:', rtdbErr);
+          }
+
+          // 2. Save to Server Master API (persists across all devices & Vercel)
           try {
             await fetch('/api/admin/settings', {
               method: 'POST',

@@ -14,9 +14,9 @@ router.use('/api/admin', verifyAdminOrMaster);
  * GET /api/admin/products
  * List all products for admin dashboard.
  */
-router.get('/api/admin/products', (req, res) => {
+router.get('/api/admin/products', async (req, res) => {
   try {
-    const products = store.getProducts();
+    const products = await store.getProductsAsync();
     res.json({ success: true, products });
   } catch (error) {
     console.error('Error fetching admin products:', error);
@@ -82,9 +82,9 @@ router.delete('/api/admin/products/:id', (req, res) => {
 //  ADMIN — STORE SETTINGS (HERO TAGLINE, ABOUT STORY)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-router.get('/api/admin/settings', (req, res) => {
+router.get('/api/admin/settings', async (req, res) => {
   try {
-    const settings = store.getSettings();
+    const settings = await store.getSettingsAsync();
     res.json({ success: true, settings });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch settings' });
@@ -105,9 +105,9 @@ router.post('/api/admin/settings', (req, res) => {
 //  ADMIN — ORDERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-router.get('/api/admin/orders', (req, res) => {
+router.get('/api/admin/orders', async (req, res) => {
   try {
-    const orders = store.getOrders();
+    const orders = await store.getOrdersAsync();
     res.json({ success: true, orders });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch orders' });

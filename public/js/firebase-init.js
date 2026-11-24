@@ -42,6 +42,7 @@ const GhostFirebase = (function () {
   let app  = null;
   let db   = null;
   let auth = null;
+  let rtdb = null;
 
   function isConfigured() {
     const key = firebaseConfig.apiKey || '';
@@ -53,23 +54,23 @@ const GhostFirebase = (function () {
 
   /**
    * Initialize Firebase (idempotent — safe to call more than once).
-   * @returns {{ app, db, auth, isConfigured: boolean }}
+   * @returns {{ app, db, auth, rtdb, isConfigured: boolean }}
    */
   function init() {
-    if (app) return { app, db, auth, isConfigured: isConfigured() };
+    if (app) return { app, db, auth, rtdb, isConfigured: isConfigured() };
 
     if (!isConfigured()) {
       console.log(
         '%cℹ️ THE GHOST PERFUMES — Running in local/demo mode (Firebase credentials pending in public/firebase-config.js)',
         'color:#d4af37;font-weight:bold;font-size:12px;'
       );
-      return { app: null, db: null, auth: null, isConfigured: false };
+      return { app: null, db: null, auth: null, rtdb: null, isConfigured: false };
     }
 
     try {
       if (typeof firebase === 'undefined') {
         console.warn('Firebase SDK not loaded on window');
-        return { app: null, db: null, auth: null, isConfigured: false };
+        return { app: null, db: null, auth: null, rtdb: null, isConfigured: false };
       }
 
       if (!firebase.apps.length) {
@@ -78,22 +79,34 @@ const GhostFirebase = (function () {
         app = firebase.app();
       }
 
-      db   = firebase.firestore();
-      auth = firebase.auth();
+      if (typeof firebase.firestore === 'function') {
+        try {
+          db = firebase.firestore();
+          db.settings({ experimentalForceLongPolling: false, merge: true });
+        } catch (_) {}
+      }
 
-      try {
-        db.settings({ experimentalForceLongPolling: false, merge: true });
-      } catch (_) {}
+      if (typeof firebase.database === 'function') {
+        try {
+          rtdb = firebase.database();
+        } catch (_) {}
+      }
+
+      if (typeof firebase.auth === 'function') {
+        try {
+          auth = firebase.auth();
+        } catch (_) {}
+      }
 
       console.log(
-        '%c👻 THE GHOST PERFUMES — Live Firebase connected successfully! Project: ' + firebaseConfig.projectId,
+        '%c👻 THE GHOST PERFUMES — Live Firebase connected successfully! Project: ' + firebaseConfig.projectId + ' (RTDB Active: ' + Boolean(rtdb) + ')',
         'color:#b388ff;font-weight:bold;font-size:13px;'
       );
     } catch (err) {
       console.warn('🔥 Firebase initialisation note:', err.message);
     }
 
-    return { app, db, auth, isConfigured: isConfigured() };
+    return { app, db, auth, rtdb, isConfigured: isConfigured() };
   }
 
   // Auto-init on load
@@ -108,6 +121,7 @@ const GhostFirebase = (function () {
     get app()  { return app; },
     get db()   { return db; },
     get auth() { return auth; },
+    get rtdb() { return rtdb; },
     get config() { return firebaseConfig; },
     get firebase() { return typeof firebase !== 'undefined' ? firebase : null; },
     /** Firestore server-timestamp sentinel */

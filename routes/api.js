@@ -10,10 +10,10 @@ const store = require('../services/store');
  * GET /api/products
  * List all products. Supports optional ?category=men|women|unisex filter.
  */
-router.get('/api/products', (req, res) => {
+router.get('/api/products', async (req, res) => {
   try {
     const { category } = req.query;
-    const products = store.getProducts({ category });
+    const products = await store.getProductsAsync({ category });
     res.json({ success: true, products });
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -25,9 +25,9 @@ router.get('/api/products', (req, res) => {
  * GET /api/products/featured
  * Get products where featured === true.
  */
-router.get('/api/products/featured', (req, res) => {
+router.get('/api/products/featured', async (req, res) => {
   try {
-    const products = store.getProducts({ featured: true });
+    const products = await store.getProductsAsync({ featured: true });
     res.json({ success: true, products });
   } catch (error) {
     console.error('Error fetching featured products:', error);
@@ -39,9 +39,9 @@ router.get('/api/products/featured', (req, res) => {
  * GET /api/products/:id
  * Get a single product by ID.
  */
-router.get('/api/products/:id', (req, res) => {
+router.get('/api/products/:id', async (req, res) => {
   try {
-    const product = store.getProductById(req.params.id);
+    const product = await store.getProductByIdAsync(req.params.id);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
@@ -56,9 +56,9 @@ router.get('/api/products/:id', (req, res) => {
  * GET /api/settings
  * Get current store content settings (hero tagline, about story, etc.)
  */
-router.get('/api/settings', (req, res) => {
+router.get('/api/settings', async (req, res) => {
   try {
-    const settings = store.getSettings();
+    const settings = await store.getSettingsAsync();
     res.json({ success: true, settings });
   } catch (error) {
     console.error('Error fetching settings:', error);

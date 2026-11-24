@@ -359,7 +359,45 @@
         if (countBadge) countBadge.textContent = allProducts.length;
         renderProductsTable(allProducts);
 
-        // Fetch fresh products from server API
+        const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+        // 1. PRIMARY: Firebase Realtime Database Listener
+        if (GhostFirebase && GhostFirebase.rtdb) {
+            try {
+                GhostFirebase.rtdb.ref('products').on('value', (snap) => {
+                    const val = snap.val();
+                    if (val) {
+                        const arr = Array.isArray(val) ? val : Object.entries(val).map(([id, d]) => ({ id, ...d }));
+                        if (arr.length > 0) {
+                            allProducts = arr;
+                            if (countBadge) countBadge.textContent = allProducts.length;
+                            renderProductsTable(allProducts);
+                            localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
+                        }
+                    }
+                });
+            } catch(e) {
+                console.warn('[Admin] RTDB products listener notice:', e.message);
+            }
+        }
+
+        // 2. Fetch fresh products from RTDB REST (works on Vercel)
+        fetch(RTDB_URL + '/products.json')
+            .then(res => res.json())
+            .then(val => {
+                if (val) {
+                    const arr = Array.isArray(val) ? val : Object.entries(val).map(([id, d]) => ({ id, ...d }));
+                    if (arr.length > 0) {
+                        allProducts = arr;
+                        if (countBadge) countBadge.textContent = allProducts.length;
+                        renderProductsTable(allProducts);
+                        localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
+                    }
+                }
+            })
+            .catch(() => {});
+
+        // 3. Fallback to server API
         fetch('/api/products')
             .then(res => res.json())
             .then(data => {
@@ -371,34 +409,6 @@
                 }
             })
             .catch(() => {});
-
-        if (db && GhostFirebase && GhostFirebase.isConfigured()) {
-            try {
-                const unsubProducts = db
-                    .collection(COLLECTIONS.products)
-                    .orderBy('createdAt', 'desc')
-                    .onSnapshot((snap) => {
-                        if (snap && !snap.empty) {
-                            const deleted = JSON.parse(localStorage.getItem('ghost_deleted_products') || '[]');
-                            const map = new Map();
-                            getMergedProducts().forEach(p => map.set(p.id, p));
-                            snap.forEach((doc) => {
-                                if (!deleted.includes(doc.id)) {
-                                    map.set(doc.id, { id: doc.id, ...doc.data() });
-                                }
-                            });
-                            allProducts = Array.from(map.values());
-                            if (countBadge) countBadge.textContent = allProducts.length;
-                            renderProductsTable(allProducts);
-                        }
-                    }, (err) => {
-                        console.warn('Products sync deferred:', err.message);
-                    });
-                activeListeners.push(unsubProducts);
-            } catch(e) {
-                console.warn('Offline admin products active.');
-            }
-        }
     }
 
     function renderProductsTable(products) {
@@ -508,7 +518,15 @@
                 if (!productToDelete) return;
                 confirmBtn.disabled = true;
                 try {
-                    // 1. Delete from Server API
+                    // 1. PRIMARY: Delete from Firebase Realtime Database
+                    const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+                    try {
+                        await fetch(RTDB_URL + '/products/' + encodeURIComponent(productToDelete) + '.json', {
+                            method: 'DELETE'
+                        });
+                    } catch (_) {}
+
+                    // 2. Delete from Server API
                     try {
                         await fetch('/api/admin/products/' + encodeURIComponent(productToDelete), {
                             method: 'DELETE',
@@ -519,23 +537,16 @@
                         });
                     } catch (_) {}
 
-                    // 2. Remove from local storage custom products
+                    // 3. Remove from local storage custom products
                     const custom = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
                     const filtered = custom.filter(p => p.id !== productToDelete);
                     localStorage.setItem('ghost_custom_products', JSON.stringify(filtered));
 
-                    // 3. Track deleted products so default catalog products are hidden
+                    // 4. Track deleted products so default catalog products are hidden
                     const deleted = JSON.parse(localStorage.getItem('ghost_deleted_products') || '[]');
                     if (!deleted.includes(productToDelete)) {
                         deleted.push(productToDelete);
                         localStorage.setItem('ghost_deleted_products', JSON.stringify(deleted));
-                    }
-
-                    // 4. Delete from Firestore if connected
-                    if (db && GhostFirebase && GhostFirebase.isConfigured()) {
-                        try {
-                            db.collection(COLLECTIONS.products).doc(productToDelete).delete().catch(() => {});
-                        } catch (_) {}
                     }
 
                     showToast('✓ Perfume deleted from master vault successfully.', 'success');
@@ -646,7 +657,19 @@
                     createdAt: Date.now()
                 };
 
-                // 1. Send to Master Server API (persists across all devices & Vercel)
+                // 1. PRIMARY: Save to Firebase Realtime Database (works on Vercel + all devices)
+                const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+                try {
+                    await fetch(RTDB_URL + '/products/' + encodeURIComponent(newId) + '.json', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(savedObj)
+                    });
+                } catch(rtdbErr) {
+                    console.warn('[Admin] RTDB save notice:', rtdbErr);
+                }
+
+                // 2. Also save to Server API (for local dev/backup)
                 try {
                     await fetch('/api/admin/products', {
                         method: 'POST',
@@ -661,7 +684,7 @@
                     console.warn('[Admin] Server API update notice:', apiErr);
                 }
 
-                // 2. Save to local storage for instant sync across all tabs & storefront
+                // 3. Save to local storage for instant sync across all tabs & storefront
                 try {
                     const custom = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
                     const existingIdx = custom.findIndex(p => p.id === newId);
@@ -678,17 +701,6 @@
                     localStorage.setItem('ghost_deleted_products', JSON.stringify(filteredDeleted));
                 } catch(e) {
                     console.warn('LocalStorage save warning:', e);
-                }
-
-                // 3. Optional: non-blocking background Firestore write
-                if (db && GhostFirebase && GhostFirebase.isConfigured()) {
-                    try {
-                        db.collection(COLLECTIONS.products).doc(newId).set({
-                            ...productData,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        }, { merge: true }).catch(() => {});
-                    } catch (_) {}
                 }
 
                 showToast(productId ? '✓ Perfume updated successfully in Master Vault!' : '✓ New fragrance added to vault & live on storefront!', 'success');
@@ -927,7 +939,41 @@
         if (countBadge) countBadge.textContent = allOrders.length;
         renderOrdersTable(allOrders);
 
-        // Fetch from Master Server Store
+        const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+        // 1. PRIMARY: Realtime Database Listener for Orders
+        if (GhostFirebase && GhostFirebase.rtdb) {
+            try {
+                GhostFirebase.rtdb.ref('orders').on('value', (snap) => {
+                    const val = snap.val();
+                    if (val) {
+                        const arr = Array.isArray(val) ? val : Object.entries(val).map(([id, o]) => ({ id, orderId: id, ...o }));
+                        if (arr.length > 0) {
+                            allOrders = arr;
+                            if (countBadge) countBadge.textContent = allOrders.length;
+                            renderOrdersTable(allOrders);
+                        }
+                    }
+                });
+            } catch(e) {}
+        }
+
+        // 2. Fetch from RTDB REST (works on Vercel)
+        fetch(RTDB_URL + '/orders.json')
+            .then(res => res.json())
+            .then(val => {
+                if (val) {
+                    const arr = Array.isArray(val) ? val : Object.entries(val).map(([id, o]) => ({ id, orderId: id, ...o }));
+                    if (arr.length > 0) {
+                        allOrders = arr;
+                        if (countBadge) countBadge.textContent = allOrders.length;
+                        renderOrdersTable(allOrders);
+                    }
+                }
+            })
+            .catch(() => {});
+
+        // 3. Fetch from Master Server Store
         try {
             const res = await fetch('/api/admin/orders', {
                 headers: {
@@ -939,10 +985,6 @@
             if (data.success && Array.isArray(data.orders) && data.orders.length > 0) {
                 const map = new Map();
                 data.orders.forEach(o => map.set(o.orderId || o.id, { id: o.orderId || o.id, ...o }));
-                getLocalOrders().forEach(o => {
-                    const id = o.orderId || o.id;
-                    if (!map.has(id)) map.set(id, o);
-                });
                 allOrders = Array.from(map.values());
                 if (countBadge) countBadge.textContent = allOrders.length;
                 renderOrdersTable(allOrders);
@@ -1081,8 +1123,15 @@
                 }
             } catch (_) {}
 
-            // 2. Update via Master API
+            // 2. Update via Master API & RTDB
+            const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
             try {
+                fetch(RTDB_URL + '/orders/' + encodeURIComponent(orderId) + '/status.json', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newStatus)
+                }).catch(() => {});
+
                 await fetch(`/api/admin/orders/${orderId}`, {
                     method: 'PUT',
                     headers: {

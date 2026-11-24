@@ -488,6 +488,10 @@ const GhostApp = (function () {
   // ════════════════════════════════════════════════════
   //  Dynamic Storefront Content (Editable from Admin)
   // ════════════════════════════════════════════════════
+  //  Storefront Live Settings (Hero Tagline, About Story)
+  // ════════════════════════════════════════════════════
+  const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+
   async function _applyStoreSettings() {
     let settings = null;
     try {
@@ -499,7 +503,35 @@ const GhostApp = (function () {
       _renderSettingsDOM(settings);
     }
 
-    // 2. Fetch master settings from server API (always in sync with Admin Panel)
+    // 2. Realtime listener via Firebase RTDB (works on Vercel + all devices)
+    try {
+      if (GhostFirebase && GhostFirebase.rtdb) {
+        GhostFirebase.rtdb.ref('settings').on('value', (snapshot) => {
+          const val = snapshot.val();
+          if (val) {
+            settings = { ...(settings || {}), ...val };
+            localStorage.setItem('ghost_store_settings', JSON.stringify(settings));
+            _renderSettingsDOM(settings);
+          }
+        });
+      }
+    } catch (_) {}
+
+    // 3. Direct REST fetch to RTDB (always works on Vercel)
+    try {
+      const resp = await fetch(RTDB_URL + '/settings.json');
+      if (resp.ok) {
+        const val = await resp.json();
+        if (val) {
+          settings = { ...(settings || {}), ...val };
+          localStorage.setItem('ghost_store_settings', JSON.stringify(settings));
+          _renderSettingsDOM(settings);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // 4. Server API fallback
     try {
       const resp = await fetch('/api/settings');
       if (resp.ok) {
@@ -511,22 +543,6 @@ const GhostApp = (function () {
         }
       }
     } catch (_) {}
-
-    // 3. Cloud sync if Firebase is connected
-    if (typeof GhostFirebase !== 'undefined' && GhostFirebase.isConfigured() && GhostFirebase.db) {
-      try {
-        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 1500));
-        const doc = await Promise.race([
-          GhostFirebase.db.collection('settings').doc('storeContent').get(),
-          timeoutPromise
-        ]);
-        if (doc && doc.exists) {
-          const cloudSettings = { ...(settings || {}), ...doc.data() };
-          localStorage.setItem('ghost_store_settings', JSON.stringify(cloudSettings));
-          _renderSettingsDOM(cloudSettings);
-        }
-      } catch (_) {}
-    }
   }
 
   function _renderSettingsDOM(settings) {

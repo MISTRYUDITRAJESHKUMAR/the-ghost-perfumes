@@ -5,6 +5,8 @@ const PRODUCTS_FILE = path.join(__dirname, '..', 'data', 'products.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'settings.json');
 const ORDERS_FILE   = path.join(__dirname, '..', 'data', 'orders.json');
 
+const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+
 // In-memory cache for ultra-fast response & serverless compatibility
 let _productsCache = null;
 let _settingsCache = null;
@@ -28,13 +30,33 @@ function _safeWriteJSON(filePath, data) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.warn(`[Store] Read-only / note writing ${filePath}:`, err.message);
+    // Expected on read-only serverless filesystems like Vercel
   }
+}
+
+function _rtdbToArray(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  return Object.entries(val).map(([id, data]) => ({ id, ...data }));
 }
 
 // ─────────────────────────────────────────────────────────────
 // PRODUCTS API
 // ─────────────────────────────────────────────────────────────
+async function getProductsAsync(filter = {}) {
+  try {
+    const res = await fetch(RTDB_URL + '/products.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        _productsCache = _rtdbToArray(data);
+      }
+    }
+  } catch (_) {}
+
+  return getProducts(filter);
+}
+
 function getProducts(filter = {}) {
   if (!_productsCache) {
     _productsCache = _safeReadJSON(PRODUCTS_FILE, []);
@@ -52,6 +74,18 @@ function getProducts(filter = {}) {
   }
 
   return list;
+}
+
+async function getProductByIdAsync(id) {
+  try {
+    const res = await fetch(RTDB_URL + '/products/' + encodeURIComponent(id) + '.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data) return { id, ...data };
+    }
+  } catch (_) {}
+
+  return getProductById(id);
 }
 
 function getProductById(id) {
@@ -101,6 +135,14 @@ function saveProduct(productData) {
   }
 
   _safeWriteJSON(PRODUCTS_FILE, _productsCache);
+
+  // Sync to Firebase Realtime Database
+  fetch(RTDB_URL + '/products/' + encodeURIComponent(id) + '.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(cleanProduct)
+  }).catch(() => {});
+
   return cleanProduct;
 }
 
@@ -112,16 +154,34 @@ function deleteProduct(id) {
   const initialLen = _productsCache.length;
   _productsCache = _productsCache.filter(p => p.id !== id);
 
-  if (_productsCache.length !== initialLen) {
-    _safeWriteJSON(PRODUCTS_FILE, _productsCache);
-    return true;
-  }
-  return false;
+  _safeWriteJSON(PRODUCTS_FILE, _productsCache);
+
+  // Sync delete to Firebase Realtime Database
+  fetch(RTDB_URL + '/products/' + encodeURIComponent(id) + '.json', {
+    method: 'DELETE'
+  }).catch(() => {});
+
+  return _productsCache.length !== initialLen;
 }
 
 // ─────────────────────────────────────────────────────────────
 // STORE SETTINGS (HERO TAGLINE, TITLE, ABOUT US STORY)
 // ─────────────────────────────────────────────────────────────
+async function getSettingsAsync() {
+  try {
+    const res = await fetch(RTDB_URL + '/settings.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        _settingsCache = data;
+        return _settingsCache;
+      }
+    }
+  } catch (_) {}
+
+  return getSettings();
+}
+
 function getSettings() {
   if (!_settingsCache) {
     _settingsCache = _safeReadJSON(SETTINGS_FILE, {
@@ -146,12 +206,35 @@ function saveSettings(newSettings) {
     updatedAt: new Date().toISOString()
   };
   _safeWriteJSON(SETTINGS_FILE, _settingsCache);
+
+  // Sync to Firebase Realtime Database
+  fetch(RTDB_URL + '/settings.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(_settingsCache)
+  }).catch(() => {});
+
   return _settingsCache;
 }
 
 // ─────────────────────────────────────────────────────────────
 // ORDERS API
 // ─────────────────────────────────────────────────────────────
+async function getOrdersAsync() {
+  try {
+    const res = await fetch(RTDB_URL + '/orders.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        _ordersCache = _rtdbToArray(data);
+        return _ordersCache;
+      }
+    }
+  } catch (_) {}
+
+  return getOrders();
+}
+
 function getOrders() {
   if (!_ordersCache) {
     _ordersCache = _safeReadJSON(ORDERS_FILE, []);
@@ -180,6 +263,14 @@ function saveOrder(order) {
   };
   _ordersCache.unshift(cleanOrder);
   _safeWriteJSON(ORDERS_FILE, _ordersCache);
+
+  // Sync to Firebase Realtime Database
+  fetch(RTDB_URL + '/orders/' + encodeURIComponent(cleanOrder.orderId) + '.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(cleanOrder)
+  }).catch(() => {});
+
   return cleanOrder;
 }
 
@@ -192,6 +283,13 @@ function updateOrderStatus(orderId, status) {
     order.status = status;
     order.updatedAt = new Date().toISOString();
     _safeWriteJSON(ORDERS_FILE, _ordersCache);
+
+    fetch(RTDB_URL + '/orders/' + encodeURIComponent(orderId) + '/status.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(status)
+    }).catch(() => {});
+
     return order;
   }
   return null;
@@ -199,12 +297,16 @@ function updateOrderStatus(orderId, status) {
 
 module.exports = {
   getProducts,
+  getProductsAsync,
   getProductById,
+  getProductByIdAsync,
   saveProduct,
   deleteProduct,
   getSettings,
+  getSettingsAsync,
   saveSettings,
   getOrders,
+  getOrdersAsync,
   saveOrder,
   updateOrderStatus
 };
