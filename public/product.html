@@ -68,17 +68,21 @@
       <div class="product-detail-layout">
         <!-- Left: Image Gallery & 3D Tilt View -->
         <div>
-          <div class="tilt-card bottle-aura product-main-stage" style="position: relative; overflow: hidden;">
-            <span id="product-sale-badge" class="product-badge sale" style="display: none; position: absolute; top: 1.5rem; left: 1.5rem;">Sale</span>
-            <span id="product-img-counter" style="display: none; position: absolute; bottom: 1.25rem; right: 1.25rem; background: rgba(10, 10, 15, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: var(--radius-full); padding: 0.25rem 0.75rem; font-size: 0.78rem; color: #cbd5e1; z-index: 2;"><i class="fas fa-camera"></i> <span id="current-img-index">1</span>/<span id="total-img-count">1</span></span>
+          <div class="tilt-card bottle-aura product-main-stage">
+            <span id="product-sale-badge" class="product-badge sale" style="display: none; position: absolute; top: 1.5rem; left: 1.5rem; z-index: 5;">Sale</span>
+            <span id="product-img-counter" class="gallery-img-counter" style="display: none;"><i class="fas fa-camera"></i> <span id="current-img-index">1</span>/<span id="total-img-count">1</span></span>
             
-            <button id="gallery-prev-btn" class="gallery-arrow-btn gallery-arrow-btn--prev" aria-label="Previous Image" style="display:none;position:absolute;left:1rem;top:50%;transform:translateY(-50%);z-index:3;width:40px;height:40px;border-radius:50%;background:rgba(10,10,15,0.7);backdrop-filter:blur(6px);border:1px solid var(--border-glow);color:#fff;cursor:pointer;"><i class="fas fa-chevron-left"></i></button>
-            <img id="product-main-image" src="" alt="Flacon" style="max-height: 85%; max-width: 85%; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8)); transition: opacity 0.25s ease, transform var(--transition-smooth);">
-            <button id="gallery-next-btn" class="gallery-arrow-btn gallery-arrow-btn--next" aria-label="Next Image" style="display:none;position:absolute;right:1rem;top:50%;transform:translateY(-50%);z-index:3;width:40px;height:40px;border-radius:50%;background:rgba(10,10,15,0.7);backdrop-filter:blur(6px);border:1px solid var(--border-glow);color:#fff;cursor:pointer;"><i class="fas fa-chevron-right"></i></button>
+            <button id="gallery-prev-btn" class="gallery-arrow-btn gallery-arrow-btn--prev" aria-label="Previous Photo" style="display: none;">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <img id="product-main-image" src="" alt="Flacon" style="max-height: 88%; max-width: 88%; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8)); transition: opacity 0.25s ease, transform var(--transition-smooth); user-select: none;">
+            <button id="gallery-next-btn" class="gallery-arrow-btn gallery-arrow-btn--next" aria-label="Next Photo" style="display: none;">
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
 
           <!-- Thumbnails -->
-          <div id="product-gallery" style="display: flex; gap: 0.85rem; margin-top: 1.25rem; flex-wrap: wrap;"></div>
+          <div id="product-gallery"></div>
         </div>
 
         <!-- Right: Product Information & Purchase -->

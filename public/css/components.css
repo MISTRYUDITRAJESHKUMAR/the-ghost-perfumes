@@ -868,22 +868,162 @@
   z-index: 2 !important;
 }
 
+/* ── Luxury Product Gallery Slider & Controls ───────────────────────── */
 .gallery-arrow-btn {
-  transition: background 0.25s ease, transform 0.25s ease;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(14, 11, 24, 0.82) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+  color: var(--accent-gold, #d4af37) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  margin: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 16px rgba(212, 175, 55, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gallery-arrow-btn i {
+  font-size: 1.15rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.gallery-arrow-btn--prev {
+  left: 1.25rem;
+}
+
+.gallery-arrow-btn--prev i {
+  transform: translateX(-1px);
+}
+
+.gallery-arrow-btn--next {
+  right: 1.25rem;
+}
+
+.gallery-arrow-btn--next i {
+  transform: translateX(1px);
 }
 
 .gallery-arrow-btn:hover {
-  background: var(--accent-purple) !important;
+  background: var(--accent-gold, #d4af37) !important;
+  color: #0b0914 !important;
+  border-color: var(--accent-gold, #d4af37) !important;
   transform: translateY(-50%) scale(1.1) !important;
-  color: #fff !important;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.8), 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+}
+
+.gallery-arrow-btn:hover i {
+  color: #0b0914 !important;
+}
+
+.gallery-arrow-btn--prev:hover i {
+  transform: translateX(-3px);
+}
+
+.gallery-arrow-btn--next:hover i {
+  transform: translateX(3px);
+}
+
+.gallery-arrow-btn:active {
+  transform: translateY(-50%) scale(0.94) !important;
+}
+
+.gallery-img-counter {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  background: rgba(14, 11, 24, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 10px rgba(212, 175, 55, 0.15);
+  z-index: 4;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.gallery-img-counter i {
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+}
+
+#product-gallery {
+  display: flex;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .gallery-thumb {
+  width: 74px;
+  height: 78px;
+  background: #110e1c;
+  border: 2px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  display: block;
+  flex-shrink: 0;
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
 .gallery-thumb:hover {
   transform: translateY(-2px);
-  border-color: var(--accent-gold) !important;
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+.gallery-thumb:hover img {
+  transform: scale(1.08);
+}
+
+.gallery-thumb.active {
+  border-color: var(--accent-gold, #d4af37) !important;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.55), 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+  transform: translateY(-2px);
+}
+
+.gallery-thumb.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  pointer-events: none;
 }

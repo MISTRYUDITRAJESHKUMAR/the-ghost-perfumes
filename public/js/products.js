@@ -333,7 +333,7 @@ const GhostProducts = (function () {
       if (!images.length) return;
       activeImageIndex = (index + images.length) % images.length;
       if (mainImg) {
-        mainImg.style.opacity = '0.25';
+        mainImg.style.opacity = '0.2';
         setTimeout(() => {
           mainImg.src = images[activeImageIndex];
           mainImg.alt = `${product.name} (View ${activeImageIndex + 1})`;
@@ -345,12 +345,11 @@ const GhostProducts = (function () {
         gallery.querySelectorAll('.gallery-thumb').forEach((thumb, idx) => {
           if (idx === activeImageIndex) {
             thumb.classList.add('active');
-            thumb.style.borderColor = 'var(--accent-gold)';
-            thumb.style.boxShadow = '0 0 12px rgba(212, 175, 55, 0.45)';
+            try {
+              thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } catch (_) {}
           } else {
             thumb.classList.remove('active');
-            thumb.style.borderColor = 'var(--border-subtle)';
-            thumb.style.boxShadow = 'none';
           }
         });
       }
@@ -362,24 +361,57 @@ const GhostProducts = (function () {
         mainImg.alt = product.name;
       }
       if (counterWrap && totalCountEl) {
-        counterWrap.style.display = images.length > 1 ? 'block' : 'none';
+        counterWrap.style.display = images.length > 1 ? 'inline-flex' : 'none';
         totalCountEl.textContent = images.length;
         if (curIdxEl) curIdxEl.textContent = '1';
       }
       if (prevBtn) {
         prevBtn.style.display = images.length > 1 ? 'flex' : 'none';
-        prevBtn.onclick = () => switchImage(activeImageIndex - 1);
+        prevBtn.onclick = (e) => {
+          e.preventDefault();
+          switchImage(activeImageIndex - 1);
+        };
       }
       if (nextBtn) {
         nextBtn.style.display = images.length > 1 ? 'flex' : 'none';
-        nextBtn.onclick = () => switchImage(activeImageIndex + 1);
+        nextBtn.onclick = (e) => {
+          e.preventDefault();
+          switchImage(activeImageIndex + 1);
+        };
+      }
+
+      // Add touch swipe on mobile
+      const stage = document.querySelector('.product-main-stage');
+      if (stage && !stage._hasTouchSwipe) {
+        stage._hasTouchSwipe = true;
+        let startX = 0;
+        stage.addEventListener('touchstart', (e) => {
+          startX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        stage.addEventListener('touchend', (e) => {
+          const diff = e.changedTouches[0].screenX - startX;
+          if (Math.abs(diff) > 40) {
+            if (diff < 0) switchImage(activeImageIndex + 1);
+            else switchImage(activeImageIndex - 1);
+          }
+        }, { passive: true });
+      }
+
+      // Add keyboard arrow navigation
+      if (!window._ghostGalleryKeyNav) {
+        window._ghostGalleryKeyNav = true;
+        window.addEventListener('keydown', (e) => {
+          if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+          if (e.key === 'ArrowLeft') switchImage(activeImageIndex - 1);
+          if (e.key === 'ArrowRight') switchImage(activeImageIndex + 1);
+        });
       }
     }
 
     if (gallery && images.length > 1) {
       gallery.innerHTML = images.map((url, i) => `
-        <button class="gallery-thumb ${i === 0 ? 'active' : ''}" style="width:72px;height:76px;background:#13111e;border:2px solid ${i === 0 ? 'var(--accent-gold)' : 'var(--border-subtle)'};border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;padding:0;transition:all 0.25s ease;" data-index="${i}" title="View angle ${i + 1}">
-          <img src="${_escHtml(url)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80';" />
+        <button type="button" class="gallery-thumb ${i === 0 ? 'active' : ''}" data-index="${i}" title="View angle ${i + 1}" aria-label="View angle ${i + 1}">
+          <img src="${_escHtml(url)}" alt="${_escHtml(product.name)} view ${i + 1}" onerror="this.src='https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80';" />
         </button>
       `).join('');
 
