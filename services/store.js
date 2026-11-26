@@ -48,9 +48,7 @@ async function getProductsAsync(filter = {}) {
     const res = await fetch(RTDB_URL + '/products.json');
     if (res.ok) {
       const data = await res.json();
-      if (data) {
-        _productsCache = _rtdbToArray(data);
-      }
+      _productsCache = _rtdbToArray(data);
     }
   } catch (_) {}
 

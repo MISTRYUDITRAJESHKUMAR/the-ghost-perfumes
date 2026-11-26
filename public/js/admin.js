@@ -355,6 +355,18 @@
             return Array.from(map.values());
         }
 
+        function updateProductState(arr) {
+            allProducts = Array.isArray(arr) ? arr : [];
+            if (countBadge) countBadge.textContent = allProducts.length;
+            renderProductsTable(allProducts);
+            if (allProducts.length > 0) {
+                localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
+            } else {
+                localStorage.removeItem('ghost_custom_products');
+                localStorage.removeItem('ghost_deleted_products');
+            }
+        }
+
         allProducts = getMergedProducts();
         if (countBadge) countBadge.textContent = allProducts.length;
         renderProductsTable(allProducts);
@@ -366,15 +378,8 @@
             try {
                 GhostFirebase.rtdb.ref('products').on('value', (snap) => {
                     const val = snap.val();
-                    if (val) {
-                        const arr = Array.isArray(val) ? val : Object.entries(val).map(([id, d]) => ({ id, ...d }));
-                        if (arr.length > 0) {
-                            allProducts = arr;
-                            if (countBadge) countBadge.textContent = allProducts.length;
-                            renderProductsTable(allProducts);
-                            localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
-                        }
-                    }
+                    const arr = !val ? [] : (Array.isArray(val) ? val : Object.entries(val).map(([id, d]) => ({ id, ...d })));
+                    updateProductState(arr);
                 });
             } catch(e) {
                 console.warn('[Admin] RTDB products listener notice:', e.message);
@@ -385,15 +390,8 @@
         fetch(RTDB_URL + '/products.json')
             .then(res => res.json())
             .then(val => {
-                if (val) {
-                    const arr = Array.isArray(val) ? val : Object.entries(val).map(([id, d]) => ({ id, ...d }));
-                    if (arr.length > 0) {
-                        allProducts = arr;
-                        if (countBadge) countBadge.textContent = allProducts.length;
-                        renderProductsTable(allProducts);
-                        localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
-                    }
-                }
+                const arr = !val ? [] : (Array.isArray(val) ? val : Object.entries(val).map(([id, d]) => ({ id, ...d })));
+                updateProductState(arr);
             })
             .catch(() => {});
 
@@ -401,11 +399,8 @@
         fetch('/api/products')
             .then(res => res.json())
             .then(data => {
-                if (data.success && Array.isArray(data.products) && data.products.length > 0) {
-                    allProducts = data.products;
-                    if (countBadge) countBadge.textContent = allProducts.length;
-                    renderProductsTable(allProducts);
-                    localStorage.setItem('ghost_custom_products', JSON.stringify(allProducts));
+                if (data.success && Array.isArray(data.products)) {
+                    updateProductState(data.products);
                 }
             })
             .catch(() => {});
@@ -654,6 +649,37 @@
         renderAdminGallery();
     }
 
+        function compressImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > maxWidth || height > maxHeight) {
+                        if (width > height) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        } else {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = () => resolve(event.target.result);
+                img.src = event.target.result;
+            };
+            reader.onerror = () => resolve('');
+            reader.readAsDataURL(file);
+        });
+    }
+
     function initImagePreview() {
         const input = document.getElementById('productImage');
         const fileInput = document.getElementById('productImageFile');
@@ -676,28 +702,27 @@
             }, 300));
         }
 
-        // Multi-file upload from device
+        // Multi-file upload from device (auto-compressed to prevent payload size issues)
         if (fileInput) {
-            fileInput.addEventListener('change', (e) => {
+            fileInput.addEventListener('change', async (e) => {
                 const files = Array.from(e.target.files || []);
                 if (!files.length) return;
-                let loaded = 0;
-                files.forEach((file) => {
-                    if (!file.type.startsWith('image/')) return;
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const dataUrl = event.target.result;
-                        if (!productGalleryImages.includes(dataUrl)) {
-                            productGalleryImages.push(dataUrl);
+                showToast(`Optimizing ${files.length} photo(s)... Please wait.`, 'info');
+                let count = 0;
+                for (const file of files) {
+                    if (!file.type.startsWith('image/')) continue;
+                    try {
+                        const compressedDataUrl = await compressImage(file);
+                        if (compressedDataUrl && !productGalleryImages.includes(compressedDataUrl)) {
+                            productGalleryImages.push(compressedDataUrl);
+                            count++;
                         }
-                        loaded++;
-                        if (loaded === files.length) {
-                            renderAdminGallery();
-                            showToast(`✓ ${files.length} photo(s) added to gallery!`, 'success');
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                });
+                    } catch(err) {
+                        console.error('Error compressing image:', err);
+                    }
+                }
+                renderAdminGallery();
+                showToast(`✓ ${count} photo(s) optimized & added to gallery!`, 'success');
             });
         }
 
@@ -752,6 +777,7 @@
                     inStock: productData.stock > 0,
                     stockQty: productData.stock,
                     thumbnail: productData.image,
+                    images: productData.images || [productData.image],
                     shortDesc: productData.description.slice(0, 100) + '...',
                     createdAt: Date.now()
                 };
@@ -845,6 +871,19 @@
                 .filter(Boolean);
         };
 
+        const primaryVal = document.getElementById('productImage')?.value.trim() || '';
+        let finalImages = Array.isArray(productGalleryImages) ? [...productGalleryImages] : [];
+        if (primaryVal && !finalImages.includes(primaryVal)) {
+            finalImages.unshift(primaryVal);
+        }
+        document.querySelectorAll('.additional-img-url').forEach(inp => {
+            const v = inp.value.trim();
+            if (v && !finalImages.includes(v)) {
+                finalImages.push(v);
+            }
+        });
+        const coverImg = finalImages[0] || primaryVal || 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=800&q=80';
+
         return {
             name: document.getElementById('productName').value.trim(),
             description: document.getElementById('productDescription').value.trim(),
@@ -853,8 +892,10 @@
             category: document.getElementById('productCategory').value,
             sizes: selectedSizes,
             featured: document.getElementById('productFeatured').checked,
-            image: document.getElementById('productImage').value.trim(),
-            imageUrl: document.getElementById('productImage').value.trim(),
+            image: coverImg,
+            imageUrl: coverImg,
+            thumbnail: coverImg,
+            images: finalImages.length > 0 ? finalImages : [coverImg],
             notes: {
                 top: parseNotes('topNotes'),
                 middle: parseNotes('middleNotes'),
@@ -923,6 +964,12 @@
     }
 
     function resetImagePreview() {
+        productGalleryImages = [];
+        const additionalContainer = document.getElementById('additionalUrlsContainer');
+        if (additionalContainer) additionalContainer.innerHTML = '';
+        const fileInput = document.getElementById('productImageFile');
+        if (fileInput) fileInput.value = '';
+        renderAdminGallery();
         const preview = document.getElementById('imagePreview');
         if (preview) {
             preview.innerHTML = `<i class="fas fa-image"></i><p>Image preview will appear here</p>`;
