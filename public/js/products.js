@@ -13,376 +13,7 @@
 const GhostProducts = (function () {
   'use strict';
 
-  const _defaultCatalog = [
-    {
-        "category": "men",
-        "createdAt": 1731900000000,
-        "description": "Carved from the darkest shadows of ancient Siberian forests. Smoked birch wood and aged black cardamom colliding with raw Himalayan oud and bourbon-soaked oak barrels.",
-        "featured": true,
-        "id": "ghost-02",
-        "image": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Obsidian Haunt",
-        "notes": {
-            "base": [
-                "Charred Oak",
-                "Java Vetiver",
-                "Black Ambergris"
-            ],
-            "middle": [
-                "Dark Saddle Leather",
-                "Wild Himalayan Oud",
-                "Castoreum Resin"
-            ],
-            "top": [
-                "Smoked Birch",
-                "Black Cardamom",
-                "Burnt Orange Peel"
-            ]
-        },
-        "price": 2999,
-        "shortDesc": "Smoked birch, Himalayan oud, leather & charred oak.",
-        "sizes": [
-            {
-                "label": "Standard Flacon",
-                "ml": "100ml",
-                "price": 2999
-            },
-            {
-                "label": "Grand Reserve",
-                "ml": "250ml",
-                "price": 4999
-            }
-        ],
-        "stock": 8,
-        "stockQty": 8,
-        "tags": [
-            "dark",
-            "smoky",
-            "leather",
-            "men"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "category": "women",
-        "createdAt": 1731800000000,
-        "description": "A crimson blood rose blooming in a frozen gothic garden. Enriched with rare blackcurrant nectar, nocturnal damask petals, and a base of pure Bourbon vanilla pods.",
-        "featured": true,
-        "id": "ghost-03",
-        "image": "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Spectral Rose",
-        "notes": {
-            "base": [
-                "Bourbon Vanilla Pod",
-                "Sandalwood Cream",
-                "Dark Amber"
-            ],
-            "middle": [
-                "Nocturnal Damask Rose",
-                "Crimson Peony",
-                "Geranium Absolute"
-            ],
-            "top": [
-                "Blackcurrant Buds",
-                "Frozen Pink Peppercorn",
-                "Lychee Mist"
-            ]
-        },
-        "price": 2599,
-        "salePrice": 2199,
-        "shortDesc": "Frozen crimson rose, blackcurrant nectar & dark vanilla.",
-        "sizes": [
-            {
-                "label": "Travel Flacon",
-                "ml": "50ml",
-                "price": 1699
-            },
-            {
-                "label": "Sanctuary Flacon",
-                "ml": "100ml",
-                "price": 2599
-            }
-        ],
-        "stock": 18,
-        "stockQty": 18,
-        "tags": [
-            "rose",
-            "floral",
-            "dark-rose",
-            "women"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "category": "women",
-        "createdAt": 1731700000000,
-        "description": "Not the sweet confection of mortal dreams, but a smoky, resinous Madagascar vanilla bean scorched over ceremonial birch charcoal.",
-        "featured": false,
-        "id": "ghost-04",
-        "image": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Ether Vanilla",
-        "notes": {
-            "base": [
-                "Madagascar Vanilla Absolute",
-                "Benzoin Tears",
-                "White Cedar"
-            ],
-            "middle": [
-                "Smoked Vanilla Orchid",
-                "Heliotrope",
-                "Tonka Bean"
-            ],
-            "top": [
-                "Almond Blossom",
-                "Candied Nutmeg",
-                "Golden Rum"
-            ]
-        },
-        "price": 2799,
-        "shortDesc": "Scorched Madagascar vanilla bean, benzoin & tonka resin.",
-        "sizes": [
-            {
-                "label": "Sanctuary Flacon",
-                "ml": "100ml",
-                "price": 2799
-            }
-        ],
-        "stock": 20,
-        "stockQty": 20,
-        "tags": [
-            "women",
-            "vanilla",
-            "gourmand"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "category": "men",
-        "createdAt": 1731600000000,
-        "description": "An apparition of dark tobacco leaf, crushed clove, and roasted coffee enveloped in the cool mist of Himalayan juniper.",
-        "featured": false,
-        "id": "ghost-05",
-        "image": "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Night Wraith",
-        "notes": {
-            "base": [
-                "Roasted Coffee Bean",
-                "Indonesian Patchouli",
-                "Oakwood"
-            ],
-            "middle": [
-                "Cured Tobacco Leaf",
-                "Crushed Clove",
-                "Black Tea"
-            ],
-            "top": [
-                "Alpine Juniper",
-                "Pink Pepper",
-                "Cold Aldehydes"
-            ]
-        },
-        "price": 2699,
-        "shortDesc": "Dark cured tobacco leaf, spiced clove & cool juniper.",
-        "sizes": [
-            {
-                "label": "Sanctuary Flacon",
-                "ml": "100ml",
-                "price": 2699
-            }
-        ],
-        "stock": 22,
-        "stockQty": 22,
-        "tags": [
-            "men",
-            "spice",
-            "tobacco"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "category": "women",
-        "createdAt": 1731500000000,
-        "description": "Luminous moonlight bottled as fragrance. Night-blooming jasmine, creamy white peach, and silken magnolia layered over white cedarwood.",
-        "featured": true,
-        "id": "ghost-06",
-        "image": "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Lunar Mirage",
-        "notes": {
-            "base": [
-                "White Cedarwood",
-                "Soft Amber",
-                "Tonka Bean"
-            ],
-            "middle": [
-                "Nocturnal Jasmine",
-                "White Magnolia",
-                "Freesia"
-            ],
-            "top": [
-                "White Peach Flesh",
-                "Star Anise",
-                "Green Mandarin"
-            ]
-        },
-        "price": 2399,
-        "shortDesc": "Night-blooming jasmine, white peach & silken magnolia.",
-        "sizes": [
-            {
-                "label": "Sanctuary Flacon",
-                "ml": "100ml",
-                "price": 2399
-            }
-        ],
-        "stock": 15,
-        "stockQty": 15,
-        "tags": [
-            "women",
-            "jasmine",
-            "ethereal"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "category": "unisex",
-        "createdAt": 1731400000000,
-        "description": "A radiant golden nebula of amber resin, candied cinnamon bark, and labdanum warmth that glows intimately upon the pulse points.",
-        "featured": false,
-        "id": "ghost-07",
-        "image": "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Astral Amber",
-        "notes": {
-            "base": [
-                "Siam Benzoin",
-                "Labdanum",
-                "Dark Vanilla"
-            ],
-            "middle": [
-                "Baltic Amber",
-                "Ceylon Cinnamon",
-                "Immortelle"
-            ],
-            "top": [
-                "Calabrian Mandarin",
-                "Clary Sage",
-                "Coriander"
-            ]
-        },
-        "price": 2899,
-        "shortDesc": "Warm amber nebula, candied cinnamon & sacred labdanum.",
-        "sizes": [
-            {
-                "label": "Sanctuary Flacon",
-                "ml": "100ml",
-                "price": 2899
-            }
-        ],
-        "stock": 11,
-        "stockQty": 11,
-        "tags": [
-            "amber",
-            "unisex",
-            "warm"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-        "category": "unisex",
-        "createdAt": 1731300000000,
-        "description": "Raw oceanic storm mist crashing upon petrified coastal driftwood. Infused with floating grey ambergris harvested ethically from Atlantic shores.",
-        "featured": true,
-        "id": "ghost-08",
-        "image": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-        "images": [
-            "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
-        ],
-        "inStock": true,
-        "name": "Silent Revenant",
-        "notes": {
-            "base": [
-                "Natural Grey Ambergris",
-                "Black Oakmoss"
-            ],
-            "middle": [
-                "Petrified Driftwood",
-                "Italian Orris Butter"
-            ],
-            "top": [
-                "Oceanic Sea Salt",
-                "Grey Thyme",
-                "Icy Ozone"
-            ]
-        },
-        "price": 3299,
-        "shortDesc": "Oceanic salt mist, Atlantic grey ambergris & driftwood.",
-        "sizes": [
-            {
-                "label": "Sanctuary Flacon",
-                "ml": "100ml",
-                "price": 3299
-            }
-        ],
-        "stock": 5,
-        "stockQty": 5,
-        "tags": [
-            "rare",
-            "ambergris",
-            "unisex"
-        ],
-        "thumbnail": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
-        "imageUrl": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80"
-    }
-];
+  const _defaultCatalog = [];
 
   let _cache = [];
   let _unsubscribe = null;
@@ -391,16 +22,14 @@ const GhostProducts = (function () {
     try {
       const custom = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
       const deleted = JSON.parse(localStorage.getItem('ghost_deleted_products') || '[]');
-      const map = new Map();
-      _defaultCatalog.forEach(p => {
-        if (!deleted.includes(p.id)) map.set(p.id, p);
-      });
-      custom.forEach(p => {
-        if (!deleted.includes(p.id)) map.set(p.id, p);
-      });
-      return Array.from(map.values());
+      const legacyDummyIds = ['ghost-01','ghost-02','ghost-03','ghost-04','ghost-05','ghost-06','ghost-07'];
+      const filtered = custom.filter(p => !legacyDummyIds.includes(p.id) && !deleted.includes(p.id));
+      if (filtered.length !== custom.length) {
+        localStorage.setItem('ghost_custom_products', JSON.stringify(filtered));
+      }
+      return filtered;
     } catch (e) {
-      return [..._defaultCatalog];
+      return [];
     }
   }
 
@@ -417,27 +46,31 @@ const GhostProducts = (function () {
     _cache = _getLocalProducts();
     if (typeof onUpdate === 'function') onUpdate(_cache);
 
+    function applyUpdate(arr) {
+      _cache = Array.isArray(arr) ? arr : [];
+      if (_cache.length > 0) {
+        try { localStorage.setItem('ghost_custom_products', JSON.stringify(_cache)); } catch (_) {}
+      } else {
+        try {
+          localStorage.removeItem('ghost_custom_products');
+          localStorage.removeItem('ghost_deleted_products');
+        } catch (_) {}
+      }
+      if (typeof onUpdate === 'function') onUpdate(_cache);
+    }
+
     // PRIMARY: Firebase Realtime Database (works on Vercel + all devices)
     try {
       if (GhostFirebase && GhostFirebase.rtdb) {
         const productsRef = GhostFirebase.rtdb.ref('products');
         productsRef.on('value', (snapshot) => {
           const val = snapshot.val();
-          if (val) {
-            const rtdbProducts = _rtdbToArray(val);
-            if (rtdbProducts.length > 0) {
-              _cache = rtdbProducts;
-              try {
-                localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
-              } catch (_) {}
-              if (typeof onUpdate === 'function') onUpdate(_cache);
-            }
-          }
+          const rtdbProducts = _rtdbToArray(val);
+          applyUpdate(rtdbProducts);
         }, (err) => {
           console.warn('[GhostProducts] RTDB listener deferred:', err.message);
         });
         _unsubscribe = () => productsRef.off('value');
-        return _unsubscribe;
       }
     } catch (e) {
       console.warn('[GhostProducts] RTDB listener setup failed:', e.message);
@@ -447,15 +80,17 @@ const GhostProducts = (function () {
     fetch(RTDB_URL + '/products.json')
       .then(r => r.json())
       .then(val => {
-        if (val) {
-          const rtdbProducts = _rtdbToArray(val);
-          if (rtdbProducts.length > 0) {
-            _cache = rtdbProducts;
-            try {
-              localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
-            } catch (_) {}
-            if (typeof onUpdate === 'function') onUpdate(_cache);
-          }
+        const rtdbProducts = _rtdbToArray(val);
+        applyUpdate(rtdbProducts);
+      })
+      .catch(() => {});
+
+    // FALLBACK: Server REST API
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(json => {
+        if (json && json.success && Array.isArray(json.products)) {
+          applyUpdate(json.products);
         }
       })
       .catch(() => {});
@@ -468,24 +103,24 @@ const GhostProducts = (function () {
   }
 
   async function fetchAll() {
-    const local = _getLocalProducts();
-    _cache = local;
+    _cache = _getLocalProducts();
 
     // 1. Try RTDB REST (works on Vercel without server API)
     try {
       const resp = await fetch(RTDB_URL + '/products.json');
       if (resp.ok) {
         const val = await resp.json();
-        if (val) {
-          const rtdbProducts = _rtdbToArray(val);
-          if (rtdbProducts.length > 0) {
-            _cache = rtdbProducts;
-            try {
-              localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
-            } catch (_) {}
-            return _cache;
-          }
+        const rtdbProducts = _rtdbToArray(val);
+        _cache = rtdbProducts;
+        if (_cache.length > 0) {
+          try { localStorage.setItem('ghost_custom_products', JSON.stringify(_cache)); } catch (_) {}
+        } else {
+          try {
+            localStorage.removeItem('ghost_custom_products');
+            localStorage.removeItem('ghost_deleted_products');
+          } catch (_) {}
         }
+        return _cache;
       }
     } catch (_) {}
 
@@ -494,11 +129,16 @@ const GhostProducts = (function () {
       const resp = await fetch('/api/products');
       if (resp.ok) {
         const json = await resp.json();
-        if (json.success && Array.isArray(json.products) && json.products.length > 0) {
+        if (json.success && Array.isArray(json.products)) {
           _cache = json.products;
-          try {
-            localStorage.setItem('ghost_custom_products', JSON.stringify(_cache));
-          } catch (_) {}
+          if (_cache.length > 0) {
+            try { localStorage.setItem('ghost_custom_products', JSON.stringify(_cache)); } catch (_) {}
+          } else {
+            try {
+              localStorage.removeItem('ghost_custom_products');
+              localStorage.removeItem('ghost_deleted_products');
+            } catch (_) {}
+          }
           return _cache;
         }
       }

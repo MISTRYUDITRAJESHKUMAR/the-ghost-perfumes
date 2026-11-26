@@ -193,8 +193,17 @@
     function fetchDashboardStats() {
         // Baseline from local cache
         const customProds = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
-        const totalProds = 8 + customProds.length;
+        const totalProds = customProds.length;
         setStatValue('statTotalProducts', totalProds);
+
+        const RTDB_URL = 'https://perfume-37ca2-default-rtdb.asia-southeast1.firebasedatabase.app';
+        fetch(RTDB_URL + '/products.json')
+            .then(r => r.json())
+            .then(val => {
+                const count = !val ? 0 : (Array.isArray(val) ? val.length : Object.keys(val).length);
+                setStatValue('statTotalProducts', count);
+            })
+            .catch(() => {});
 
         const localOrders = JSON.parse(localStorage.getItem('ghost_orders') || '[]');
         setStatValue('statTotalOrders', localOrders.length || 0);
@@ -340,19 +349,27 @@
         function getMergedProducts() {
             const custom = JSON.parse(localStorage.getItem('ghost_custom_products') || '[]');
             const deleted = JSON.parse(localStorage.getItem('ghost_deleted_products') || '[]');
+            const legacyDummyIds = ['ghost-01','ghost-02','ghost-03','ghost-04','ghost-05','ghost-06','ghost-07'];
             const defs = (typeof GhostProducts !== 'undefined' && GhostProducts.getCached) ? GhostProducts.getCached() : [];
             const map = new Map();
             defs.forEach(p => {
-                if (!deleted.includes(p.id)) {
+                if (!deleted.includes(p.id) && !legacyDummyIds.includes(p.id)) {
                     map.set(p.id, { ...p, stock: p.stockQty || 12, image: p.thumbnail || p.images?.[0] });
                 }
             });
             custom.forEach(p => {
-                if (!deleted.includes(p.id)) {
+                if (!deleted.includes(p.id) && !legacyDummyIds.includes(p.id)) {
                     map.set(p.id, p);
                 }
             });
-            return Array.from(map.values());
+            const res = Array.from(map.values());
+            if (res.length === 0) {
+                try {
+                    localStorage.removeItem('ghost_custom_products');
+                    localStorage.removeItem('ghost_deleted_products');
+                } catch (_) {}
+            }
+            return res;
         }
 
         function updateProductState(arr) {
